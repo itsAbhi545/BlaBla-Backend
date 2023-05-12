@@ -59,4 +59,9 @@ public class UserController {
         apiResponse.setHttpStatus(HttpStatus.ACCEPTED);
         return apiResponse;
     }
+
+    @GetMapping("/forgetPassword")
+    public String forgetPassword() {
+        return "success";
+    }
 }
