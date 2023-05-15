@@ -16,17 +16,28 @@ public class PasswordService {
     PasswordResetRepo passwordResetRepo;
 
     public PasswordReset addUuidByEmail(String email){
+
         String uuid = UUID.randomUUID().toString();
-        PasswordReset passwordReset = PasswordReset.builder()
-                .uuid(uuid)
-                .email(email)
-                .build();
+        PasswordReset passwordReset = passwordResetRepo.getPasswordResetByEmail(email);
+        if(passwordReset == null) {
+         passwordReset = PasswordReset.builder()
+                    .uuid(uuid)
+                    .email(email)
+                    .isVerify(false)
+                    .build();
+        }
+        passwordReset.setUuid(uuid);
         return passwordResetRepo.save(passwordReset);
     }
     public PasswordReset getByEmail(String email) {
          return passwordResetRepo.getPasswordResetByEmail(email);
     }
     public void deleteTokenByEmail(String email) {
-        passwordResetRepo.deleteByEmail(email);
+        log.info("\u001B[41m" + "im here"+ "\u001B[0m");
+
+        passwordResetRepo.deletePasswordResetByEmail(email);
+    }
+    public PasswordReset savePasswordReset(PasswordReset passwordReset){
+        return passwordResetRepo.save(passwordReset);
     }
 }

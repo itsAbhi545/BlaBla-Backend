@@ -33,7 +33,11 @@ public class CustomAuthorizationFilter extends OncePerRequestFilter {
         System.out.println(request.getServletPath()+"///");
         if(request.getServletPath().equals("/api/login")||request.getServletPath().equals("/api/signup")||
         request.getServletPath().equals("/health-check")||request.getServletPath().equals("/favicon.ico")
-        ||request.getServletPath().equals("/error")||request.getServletPath().equals("/api/verify-user/email"))
+        ||request.getServletPath().equals("/error")||request.getServletPath().equals("/api/verify-user/email")
+        ||request.getServletPath().equals("/api/forgetPassword")
+        ||request.getServletPath().contains("/api/checkLinkPasswordReset") || request.getServletPath().contains("/api/resetPassword")
+
+        )
         {
             System.out.println( "\u001B[31m" + request.getServletPath() + "\u001B[0m");
             filterChain.doFilter(request,response);

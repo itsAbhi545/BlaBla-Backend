@@ -55,9 +55,13 @@ public class SecConfig {
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
         http.authorizeHttpRequests().requestMatchers("/api/login","/api/signup","/health-check","/favicon.ico","/error").permitAll();
         http.authorizeHttpRequests().requestMatchers("/api/verify-user/email").permitAll();
+        http.authorizeHttpRequests().requestMatchers("/api/forgetPassword").permitAll();
+        http.authorizeHttpRequests().requestMatchers("/api/checkLinkPasswordReset/**").permitAll();
+        http.authorizeHttpRequests().requestMatchers("/api/resetPassword/**").permitAll();
+
         http.authorizeHttpRequests().anyRequest().authenticated();
         http.addFilter(filter);
-        http.exceptionHandling().authenticationEntryPoint(authenticationEntryPoint);
+//        http.exceptionHandling().authenticationEntryPoint(authenticationEntryPoint);
         http.addFilterBefore(new CustomAuthorizationFilter(userTokensService), UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }

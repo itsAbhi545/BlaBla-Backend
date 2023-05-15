@@ -8,9 +8,11 @@ import jakarta.validation.constraints.Pattern;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.hibernate.annotations.UuidGenerator;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.bind.DefaultValue;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Entity
 @Table(name="user")
@@ -33,14 +35,16 @@ public class User {
     @NotNull(message = "DateOfBirth can't be null")
     private  String dob;
 
+
     public String getUuid() {
-        return uuid;
+        return uuid.toString();
     }
 
     public void setUuid(String uuid) {
         this.uuid = uuid;
     }
-    @UuidGenerator
+
+
     private String uuid;
     @CreationTimestamp
     private LocalDateTime dateCreated; //epoctime

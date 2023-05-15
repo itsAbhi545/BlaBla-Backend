@@ -34,7 +34,7 @@ public class UserController {
     private final PasswordService passwordService;
     private final EmailService emailService;
 
-    @Value("${server.address}")
+    @Value("${address}")
     String currentDomain;
     //private final ObjectMapper objectMapper;
 
@@ -102,7 +102,7 @@ public class UserController {
     @PostMapping("/forgetPassword")
 
     public void forgetPassword(@RequestParam("email") String email, Model model) throws MessagingException {
-        String url = currentDomain + "checkLinkPasswordReset/";
+        String url = currentDomain + "api/checkLinkPasswordReset/";
         //Added Random uuid
         PasswordReset passwordReset = passwordService.addUuidByEmail(email);
         String userUuid = userService.findUserByEmail(email).getUuid();
@@ -117,36 +117,47 @@ public class UserController {
         emailService.sendPasswordResetLink(email, "Reset Your Password",  message);
 
     }
-    @RequestMapping("/checkLinkPasswordReset/{uniqueId}/{userUuid}")
+    @GetMapping("/checkLinkPasswordReset/{uniqueId}/{userUuid}")
     public ApiResponse forgetPassword(@PathVariable("userUuid") String userUuid, @PathVariable("uniqueId") String userUniqueId,
                                  @RequestParam("email")String email,  Model model){
+        System.out.println("scavsghavsavscaghv");
         String userUuidFinal = passwordService.getByEmail(email).getUuid();
         String userUniqueIdFinal = userService.findUserByEmail(email).getUuid();
         if((userUuidFinal != null && userUniqueIdFinal != null) &&
                 (userUniqueIdFinal.equals(userUniqueId) && userUuidFinal.equals(userUuid))
         ){
+            log.info("\u001B[41m" + "here"+ "\u001B[0m");
+            PasswordReset passwordReset = passwordService.getByEmail(email);
+            passwordReset.setIsVerify(true);
+            passwordService.savePasswordReset(passwordReset);
+
             apiResponse.setMessage("Link Verified Successfully");
             apiResponse.setHttpStatus(HttpStatus.CONTINUE);
 
             return apiResponse;
         }
-        passwordService.deleteTokenByEmail(email);
-//        model.addAttribute("alert", "Link does Not Matched");
-        throw new ApiException(HttpStatus.BAD_REQUEST, "Link does not Matched");
+       throw new ApiException(HttpStatus.BAD_REQUEST, "Link does not Matched");
     }
-    @PostMapping("/resetPassword/{email}")
-    public String resetPassword(@PathVariable("email") String email,HttpServletRequest request, Model model) {
+    @PostMapping("/resetPassword")
+    public ApiResponse resetPassword(@RequestParam("email") String email,HttpServletRequest request, Model model) {
         String newPassword = request.getParameter("password");
         String cnfPassword = request.getParameter("cnfpassword");
-        if(newPassword.equals(cnfPassword)) {
+        PasswordReset passwordReset = passwordService.getByEmail(email);
+        if(newPassword.equals(cnfPassword) && passwordReset.getIsVerify()) {
             User user = userService.findUserByEmail(email);
             user.setPassword(newPassword);
             userService.saveUser(user);
 //            delete token
             passwordService.deleteTokenByEmail(email);
-            return "Password Reset Successfully";
+            apiResponse.setMessage("Password Reset Successfully");
+            apiResponse.setHttpStatus(HttpStatus.ACCEPTED);
+            return apiResponse;
+        }else if(!passwordReset.getIsVerify()){
+            apiResponse.setMessage("Link Not Verified");
+            return apiResponse;
         }else {
-            return "Password Does Not Matched";
+            apiResponse.setMessage("Password does Not Matched");
+            return apiResponse;
         }
     }
 

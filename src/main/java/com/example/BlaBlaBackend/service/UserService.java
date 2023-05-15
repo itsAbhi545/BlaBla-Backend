@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.UUID;
 
 @Service
 public class UserService implements UserDetailsService{
@@ -19,6 +20,7 @@ public class UserService implements UserDetailsService{
         this.userRepo = userRepo;
     }
     public User saveUser(User user){
+        user.setUuid(UUID.randomUUID().toString());
         return  userRepo.save(user);
     }
     public User findUserByEmail(String email){
