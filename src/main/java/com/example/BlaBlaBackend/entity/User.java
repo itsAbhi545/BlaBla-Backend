@@ -7,6 +7,7 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
+import org.hibernate.annotations.UuidGenerator;
 import org.springframework.boot.context.properties.bind.DefaultValue;
 
 import java.time.LocalDateTime;
@@ -31,6 +32,16 @@ public class User {
     private String title="MALE";
     @NotNull(message = "DateOfBirth can't be null")
     private  String dob;
+
+    public String getUuid() {
+        return uuid;
+    }
+
+    public void setUuid(String uuid) {
+        this.uuid = uuid;
+    }
+    @UuidGenerator
+    private String uuid;
     @CreationTimestamp
     private LocalDateTime dateCreated; //epoctime
     @UpdateTimestamp
