@@ -111,10 +111,11 @@ public class UserController {
 
         String message = "<p>Click Below To Reset Your Password</p>\n" +
                 "\n" +
-                "<a href=\""+ url + "\">" +
-                "<img src='cid:clickLink' style=\"width:400px;height:42px;\"></a> ";
+                "<a href=\""+ url + "\"" +
+                "style=\"display: inline-block; text-decoration: none; background: #10A37F; border-radius: 3px; color: white; font-family: Helvetica, sans-serif; font-size: 16px; line-height: 24px; font-weight: 400; padding: 12px 20px 11px; margin: 0px\" target=\"_blank\" rel=\"noreferrer\">Verify Your Email</a> ";
 
         emailService.sendPasswordResetLink(email, "Reset Your Password",  message);
+
 
     }
     @GetMapping("/checkLinkPasswordReset/{uniqueId}/{userUuid}")
@@ -143,20 +144,26 @@ public class UserController {
         String newPassword = request.getParameter("password");
         String cnfPassword = request.getParameter("cnfpassword");
         PasswordReset passwordReset = passwordService.getByEmail(email);
-        if(newPassword.equals(cnfPassword) && passwordReset.getIsVerify()) {
-            User user = userService.findUserByEmail(email);
-            user.setPassword(newPassword);
-            userService.saveUser(user);
+        if(passwordReset != null) {
+            if (newPassword.equals(cnfPassword) && passwordReset.getIsVerify()) {
+                User user = userService.findUserByEmail(email);
+                user.setPassword(newPassword);
+                userService.saveUser(user);
 //            delete token
-            passwordService.deleteTokenByEmail(email);
-            apiResponse.setMessage("Password Reset Successfully");
-            apiResponse.setHttpStatus(HttpStatus.ACCEPTED);
-            return apiResponse;
-        }else if(!passwordReset.getIsVerify()){
-            apiResponse.setMessage("Link Not Verified");
-            return apiResponse;
-        }else {
-            apiResponse.setMessage("Password does Not Matched");
+                passwordService.deleteTokenByEmail(email);
+                apiResponse.setMessage("Password Reset Successfully");
+                apiResponse.setHttpStatus(HttpStatus.ACCEPTED);
+                return apiResponse;
+            } else if (!passwordReset.getIsVerify()) {
+                apiResponse.setMessage("Link Not Verified");
+                return apiResponse;
+            } else {
+                apiResponse.setMessage("Password does Not Matched");
+                return apiResponse;
+            }
+        }
+        else {
+            apiResponse.setMessage("Please Verify Your Email To Continue");
             return apiResponse;
         }
     }
