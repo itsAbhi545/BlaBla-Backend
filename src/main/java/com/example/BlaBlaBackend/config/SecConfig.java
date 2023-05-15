@@ -54,6 +54,7 @@ public class SecConfig {
         http.cors().disable();
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
         http.authorizeHttpRequests().requestMatchers("/api/login","/api/signup","/health-check","/favicon.ico","/error").permitAll();
+        http.authorizeHttpRequests().requestMatchers("/api/verify-user/email").permitAll();
         http.authorizeHttpRequests().anyRequest().authenticated();
         http.addFilter(filter);
         http.exceptionHandling().authenticationEntryPoint(authenticationEntryPoint);
