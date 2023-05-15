@@ -1,7 +1,8 @@
 package com.example.BlaBlaBackend.Dto;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import org.springframework.http.HttpStatus;
-
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class ApiResponse{
     private  String message;
     private  Object data;
