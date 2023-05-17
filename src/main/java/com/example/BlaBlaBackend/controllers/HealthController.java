@@ -12,7 +12,7 @@ public class HealthController {
     @PostMapping("/api/health-check")
     public String healthCheck(HttpServletRequest request){
         String value = request.getHeader("Authorization");
-        System.out.println("value =====================" + value);
+        System.out.println("value //////" + value);
         return "Ok";
     }
 }
