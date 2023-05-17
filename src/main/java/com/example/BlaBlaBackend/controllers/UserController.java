@@ -20,7 +20,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
-import java.util.UUID;
 
 @RestController
 @RequestMapping("/api")
@@ -28,7 +27,7 @@ import java.util.UUID;
 @Slf4j
 public class UserController {
     private final UserService userService;
-    private ApiResponse apiResponse;
+    private final ApiResponse apiResponse;
     private final JwtProvider jwtProvider;
     private final UserTokensService userTokensService;
     private final PasswordService passwordService;
@@ -120,7 +119,7 @@ public class UserController {
     }
     @GetMapping("/checkLinkPasswordReset/{uniqueId}/{userUuid}")
     public ApiResponse forgetPassword(@PathVariable("userUuid") String userUuid, @PathVariable("uniqueId") String userUniqueId,
-                                 @RequestParam("email")String email,  Model model){
+                                 @RequestParam("email")String email){
         System.out.println("scavsghavsavscaghv");
         String userUuidFinal = passwordService.getByEmail(email).getUuid();
         String userUniqueIdFinal = userService.findUserByEmail(email).getUuid();
@@ -131,7 +130,7 @@ public class UserController {
             PasswordReset passwordReset = passwordService.getByEmail(email);
             passwordReset.setIsVerify(true);
             passwordService.savePasswordReset(passwordReset);
-
+            passwordService.deleteTokenByEmail(email);
             apiResponse.setMessage("Link Verified Successfully");
             apiResponse.setHttpStatus(HttpStatus.CONTINUE);
 
@@ -140,7 +139,7 @@ public class UserController {
        throw new ApiException(HttpStatus.BAD_REQUEST, "Link does not Matched");
     }
     @PostMapping("/resetPassword")
-    public ApiResponse resetPassword(@RequestParam("email") String email,HttpServletRequest request, Model model) {
+    public ApiResponse resetPassword(@RequestParam("email") String email,HttpServletRequest request) {
         String newPassword = request.getParameter("password");
         String cnfPassword = request.getParameter("cnfpassword");
         PasswordReset passwordReset = passwordService.getByEmail(email);
