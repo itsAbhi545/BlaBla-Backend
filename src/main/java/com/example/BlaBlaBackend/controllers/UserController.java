@@ -23,7 +23,6 @@ import java.util.HashMap;
 
 @RestController
 @RequestMapping("/api")
-@CrossOrigin(origins = "*")
 @Slf4j
 public class UserController {
     private final UserService userService;
@@ -100,7 +99,7 @@ public class UserController {
     // Forgot Password
     @PostMapping("/forgetPassword")
 
-    public void forgetPassword(@RequestParam("email") String email, Model model) throws MessagingException {
+    public ApiResponse forgetPassword(@RequestParam("email") String email, Model model) throws MessagingException {
         String url = currentDomain + "api/checkLinkPasswordReset/";
         //Added Random uuid
         PasswordReset passwordReset = passwordService.addUuidByEmail(email);
@@ -115,7 +114,8 @@ public class UserController {
 
         emailService.sendPasswordResetLink(email, "Reset Your Password",  message);
 
-
+        apiResponse.setMessage("Verification Link Send Successfully");
+        return  apiResponse;
     }
     @GetMapping("/checkLinkPasswordReset/{uniqueId}/{userUuid}")
     public ApiResponse forgetPassword(@PathVariable("userUuid") String userUuid, @PathVariable("uniqueId") String userUniqueId,
@@ -142,6 +142,10 @@ public class UserController {
     public ApiResponse resetPassword(@RequestParam("email") String email,HttpServletRequest request) {
         String newPassword = request.getParameter("password");
         String cnfPassword = request.getParameter("cnfpassword");
+        if(newPassword == null || cnfPassword == null) {
+            apiResponse.setMessage("Please Enter The Password");
+            return apiResponse;
+        }
         PasswordReset passwordReset = passwordService.getByEmail(email);
         if(passwordReset != null) {
             if (newPassword.equals(cnfPassword) && passwordReset.getIsVerify()) {
