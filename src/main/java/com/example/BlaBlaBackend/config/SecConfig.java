@@ -1,7 +1,6 @@
 package com.example.BlaBlaBackend.config;
 
 import com.example.BlaBlaBackend.Dto.ApiResponse;
-import com.example.BlaBlaBackend.EntryPoint.CustomAuthenticationEntryPoint;
 import com.example.BlaBlaBackend.Filters.CustomAuthenticationFilter;
 import com.example.BlaBlaBackend.Filters.CustomAuthorizationFilter;
 import com.example.BlaBlaBackend.service.UserService;

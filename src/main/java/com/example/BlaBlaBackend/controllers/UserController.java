@@ -1,7 +1,6 @@
 package com.example.BlaBlaBackend.controllers;
 
 import com.example.BlaBlaBackend.Dto.ApiResponse;
-import com.example.BlaBlaBackend.Dto.UserDto;
 import com.example.BlaBlaBackend.Exceptionhandling.ApiException;
 import com.example.BlaBlaBackend.config.JwtProvider;
 import com.example.BlaBlaBackend.entity.ConfirmationToken;
@@ -12,11 +11,10 @@ import com.example.BlaBlaBackend.service.UserService;
 import com.example.BlaBlaBackend.service.UserTokensService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotNull;
 import org.springframework.http.HttpStatus;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
 import java.util.HashMap;
 import java.util.UUID;
 
@@ -91,10 +89,12 @@ public class UserController {
         apiResponse.setHttpStatus(HttpStatus.OK);
         return apiResponse;
     }
+    //route for updating the user profile
     @PatchMapping("/update/user")
-    public ApiResponse updateUser(User user){
+    public ApiResponse updateUser(User user,Principal principal){
         apiResponse.setMessage("User Updated Successfully!!");
         apiResponse.setHttpStatus(HttpStatus.valueOf(204));
+        user.setEmail(principal.getName());
         userService.updateUserProfile(user);
         return  apiResponse;
     }

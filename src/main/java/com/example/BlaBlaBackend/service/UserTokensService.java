@@ -2,7 +2,6 @@ package com.example.BlaBlaBackend.service;
 
 import com.example.BlaBlaBackend.entity.UserTokens;
 import com.example.BlaBlaBackend.repo.UserTokensRepo;
-import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Service;
 
 @Service

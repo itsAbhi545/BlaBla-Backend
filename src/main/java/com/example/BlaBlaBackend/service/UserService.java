@@ -2,7 +2,6 @@ package com.example.BlaBlaBackend.service;
 
 import com.example.BlaBlaBackend.entity.User;
 import com.example.BlaBlaBackend.repo.UserRepo;
-import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
