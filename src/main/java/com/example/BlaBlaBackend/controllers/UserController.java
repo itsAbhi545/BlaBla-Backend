@@ -22,7 +22,6 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/api")
-@CrossOrigin(origins = "*")
 public class UserController {
     private final UserService userService;
     private ApiResponse apiResponse;
@@ -70,7 +69,7 @@ public class UserController {
         return response;
     }
     //route for deleting the user
-    @DeleteMapping("/logout")
+    @PostMapping("/logout")
     @ResponseStatus(HttpStatus.ACCEPTED)
     public ApiResponse logoutUser(HttpServletRequest request){
         String jwtToken = request.getHeader("Authorization").substring(7);

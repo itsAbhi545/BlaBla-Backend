@@ -7,9 +7,12 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.context.annotation.Bean;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
@@ -36,6 +39,7 @@ public class CustomAuthorizationFilter extends OncePerRequestFilter {
         ||request.getServletPath().equals("/error")||request.getServletPath().equals("/api/verify-user/email")||
         request.getServletPath().contains("/api/confirm-account"))
         {
+            System.out.println(request.getHeader("Authorization"));
             System.out.println( "\u001B[31m" + request.getServletPath() + "\u001B[0m");
             filterChain.doFilter(request,response);
         }else{
@@ -59,4 +63,5 @@ public class CustomAuthorizationFilter extends OncePerRequestFilter {
             filterChain.doFilter(request,response);
         }
     }
+
 }
