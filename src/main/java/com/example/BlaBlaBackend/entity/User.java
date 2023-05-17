@@ -35,6 +35,8 @@ public class User {
     private LocalDateTime dateCreated; //epoctime
     @UpdateTimestamp
     private LocalDateTime lastUpdated;
+    @Column(columnDefinition = "boolean default false")
+    private boolean isVerified;
 
     public User() {
     }
@@ -53,6 +55,10 @@ public class User {
 
     public void setL_name(String l_name) {
         this.l_name = l_name;
+    }
+
+    public void setVerified(boolean verified) {
+        isVerified = verified;
     }
 
     public String getEmail() {
@@ -85,5 +91,9 @@ public class User {
 
     public void setTitle(String title) {
         this.title = title;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 }

@@ -33,13 +33,16 @@ public class CustomAuthorizationFilter extends OncePerRequestFilter {
         System.out.println(request.getServletPath()+"///");
         if(request.getServletPath().equals("/api/login")||request.getServletPath().equals("/api/signup")||
         request.getServletPath().equals("/health-check")||request.getServletPath().equals("/favicon.ico")
-        ||request.getServletPath().equals("/error")||request.getServletPath().equals("/api/verify-user/email"))
+        ||request.getServletPath().equals("/error")||request.getServletPath().equals("/api/verify-user/email")||
+        request.getServletPath().contains("/api/confirm-account"))
         {
             System.out.println( "\u001B[31m" + request.getServletPath() + "\u001B[0m");
             filterChain.doFilter(request,response);
         }else{
             System.out.println("control reaches here" + request.getServletPath() + "////");
+            System.out.println(request.getHeader("Authorization")+"////");
             String token = request.getHeader("Authorization").substring(7);
+
             UserTokens userTokens = (token==null)?null:userTokensService.findUserTokensByToken(token);
             if(userTokens==null){
                 Map<String,String> error=new HashMap<>();

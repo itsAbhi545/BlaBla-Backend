@@ -18,7 +18,7 @@ public class UserService implements UserDetailsService{
     public UserService(UserRepo userRepo) {
         this.userRepo = userRepo;
     }
-    public User createRider(User user){
+    public User saveUser(User user){
         return  userRepo.save(user);
     }
     public User findUserByEmail(String email){
@@ -33,5 +33,8 @@ public class UserService implements UserDetailsService{
         }
         Collection<SimpleGrantedAuthority> authorites=new ArrayList<>();
         return new org.springframework.security.core.userdetails.User(user.getEmail(), user.riderPassword(), authorites);
+    }
+    public void updateUserProfile(User user){
+        userRepo.updateUserProfile(user);
     }
 }
