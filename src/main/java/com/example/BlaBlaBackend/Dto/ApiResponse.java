@@ -12,6 +12,12 @@ public class ApiResponse{
 
     }
 
+    public ApiResponse(String message, Object data, HttpStatus httpStatus) {
+        this.message = message;
+        this.data = data;
+        this.httpStatus = httpStatus;
+    }
+
     public String getMessage() {
         return message;
     }

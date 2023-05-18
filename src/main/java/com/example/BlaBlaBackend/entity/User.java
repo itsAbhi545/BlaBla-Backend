@@ -2,28 +2,20 @@ package com.example.BlaBlaBackend.entity;
 
 import com.example.BlaBlaBackend.util.Regex;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
-import org.hibernate.annotations.UuidGenerator;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.context.properties.bind.DefaultValue;
+import org.springframework.boot.autoconfigure.web.WebProperties;
 
 import java.time.LocalDateTime;
-import java.util.UUID;
 
 @Entity
 @Table(name="user")
 public class User {
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-    @NotNull(message = "FirstName can't be null")
-    private String f_name;
-    @NotNull(message = "LastName can't be null")
-    private String l_name;
     @NotNull(message = "Email can't be null")
     @Pattern(regexp = Regex.EMAIL,message = "Enter valid email")
     @Column(unique = true)
@@ -31,52 +23,26 @@ public class User {
     @NotNull(message = "Password can't be null")
     @Pattern(regexp = Regex.PASSWORD,message = "Enter valid Password")
     private String password;
-    private String title="MALE";
-    @NotNull(message = "DateOfBirth can't be null")
-    private  String dob;
-
-
-    public String getUuid() {
-        return uuid.toString();
-    }
-
-    public void setUuid(String uuid) {
-        this.uuid = uuid;
-    }
-
-
-    private String uuid;
     @CreationTimestamp
     private LocalDateTime dateCreated; //epoctime
     @UpdateTimestamp
     private LocalDateTime lastUpdated;
+    @Column(columnDefinition = "boolean default false")
+    private boolean isVerified;
 
-    public User() {
+    public int grabCurrentUserId() {
+        return id;
     }
 
-    public String getF_name() {
-        return f_name;
-    }
 
-    public void setF_name(String f_name) {
-        this.f_name = f_name;
-    }
-
-    public String getL_name() {
-        return l_name;
-    }
-
-    public void setL_name(String l_name) {
-        this.l_name = l_name;
+    public void setVerified(boolean verified) {
+        isVerified = verified;
     }
 
     public String getEmail() {
         return email;
     }
 
-    public String getTitle() {
-        return title;
-    }
 
     public void setEmail(String email) {
         this.email = email;
@@ -90,15 +56,7 @@ public class User {
         this.password = password;
     }
 
-    public String getDob() {
-        return dob;
-    }
-
-    public void setDob(String dob) {
-        this.dob = dob;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
+    public void setId(int id) {
+        this.id = id;
     }
 }

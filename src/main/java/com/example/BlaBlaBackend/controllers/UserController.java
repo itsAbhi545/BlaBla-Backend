@@ -55,8 +55,8 @@ public class UserController {
         apiResponse.setHttpStatus(HttpStatus.CREATED);
         System.out.println("Control reaches here!!");
         // String title = user.getTitle().toUpperCase().equals("MISS") ? "FEMALE":"MALE";
-        if(user.getTitle()!=null)
-            user.setTitle(user.getTitle().toUpperCase().equals("MISS") ? "FEMALE":"MALE");
+//        if(user.getTitle()!=null)
+//            user.setTitle(user.getTitle().toUpperCase().equals("MISS") ? "FEMALE":"MALE");
         //saving the user token --creating the user token
         UserTokens userTokens = new UserTokens();
         userTokens.setUserId(user1);
@@ -103,9 +103,9 @@ public class UserController {
         String url = currentDomain + "api/checkLinkPasswordReset/";
         //Added Random uuid
         PasswordReset passwordReset = passwordService.addUuidByEmail(email);
-        String userUuid = userService.findUserByEmail(email).getUuid();
+
         String token = passwordReset.getUuid();
-        url += userUuid + "/" + token +  "?email=" + email;
+        url += token +  "?email=" + email;
 
         String message = "<p>Click Below To Reset Your Password</p>\n" +
                 "\n" +
@@ -117,15 +117,13 @@ public class UserController {
         apiResponse.setMessage("Verification Link Send Successfully");
         return  apiResponse;
     }
-    @GetMapping("/checkLinkPasswordReset/{uniqueId}/{userUuid}")
-    public ApiResponse forgetPassword(@PathVariable("userUuid") String userUuid, @PathVariable("uniqueId") String userUniqueId,
+    @GetMapping("/checkLinkPasswordReset/{token}")
+    public ApiResponse forgetPassword(@PathVariable("token") String token,
                                  @RequestParam("email")String email){
         System.out.println("scavsghavsavscaghv");
-        String userUuidFinal = passwordService.getByEmail(email).getUuid();
-        String userUniqueIdFinal = userService.findUserByEmail(email).getUuid();
-        if((userUuidFinal != null && userUniqueIdFinal != null) &&
-                (userUniqueIdFinal.equals(userUniqueId) && userUuidFinal.equals(userUuid))
-        ){
+        String tokenFinal = passwordService.getByEmail(email).getUuid();
+
+        if((tokenFinal != null) && (tokenFinal.equals(token))){
             log.info("\u001B[41m" + "here"+ "\u001B[0m");
             PasswordReset passwordReset = passwordService.getByEmail(email);
             passwordReset.setIsVerify(true);
