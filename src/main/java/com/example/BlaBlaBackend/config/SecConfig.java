@@ -3,8 +3,11 @@ package com.example.BlaBlaBackend.config;
 import com.example.BlaBlaBackend.Dto.ApiResponse;
 import com.example.BlaBlaBackend.Filters.CustomAuthenticationFilter;
 import com.example.BlaBlaBackend.Filters.CustomAuthorizationFilter;
+import com.example.BlaBlaBackend.service.UserProfileService;
 import com.example.BlaBlaBackend.service.UserService;
 import com.example.BlaBlaBackend.service.UserTokensService;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -33,14 +36,19 @@ public class SecConfig {
     private final JwtProvider jwtProvider;
     private final UserService userService;
     private final UserTokensService userTokensService;
+    private final ObjectMapper objectMapper;
+    private final UserProfileService userProfileService;
 
-    public SecConfig(UserDetailsService userDetailsService, AuthenticationEntryPoint authenticationEntryPoint, JwtProvider jwtProvider, UserService userService, UserTokensService userTokensService) {
+    public SecConfig(UserDetailsService userDetailsService, AuthenticationEntryPoint authenticationEntryPoint, JwtProvider jwtProvider, UserService userService, UserTokensService userTokensService, ObjectMapper objectMapper, UserProfileService userProfileService) {
         this.userDetailsService = userDetailsService;
         this.authenticationEntryPoint = authenticationEntryPoint;
         this.jwtProvider = jwtProvider;
         this.userService = userService;
         this.userTokensService = userTokensService;
+        this.objectMapper = objectMapper;
+        this.userProfileService = userProfileService;
     }
+
     @Bean
     public DaoAuthenticationProvider authenticationProvider() {
         DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
@@ -51,7 +59,7 @@ public class SecConfig {
     }
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        CustomAuthenticationFilter filter=new CustomAuthenticationFilter(authenticationManager(http.getSharedObject(AuthenticationConfiguration.class)),jwtProvider,userService,userTokensService);
+        CustomAuthenticationFilter filter=new CustomAuthenticationFilter(authenticationManager(http.getSharedObject(AuthenticationConfiguration.class)),jwtProvider,userService,userTokensService,objectMapper,userProfileService);
         filter.setFilterProcessesUrl("/api/login");
         http.csrf().disable().cors().configurationSource(corsConfigurationSource());
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
@@ -60,7 +68,7 @@ public class SecConfig {
         http.authorizeHttpRequests().anyRequest().authenticated();
         http.addFilter(filter);
         http.exceptionHandling().authenticationEntryPoint(authenticationEntryPoint);
-        http.addFilterBefore(new CustomAuthorizationFilter(userTokensService), UsernamePasswordAuthenticationFilter.class);
+        http.addFilterBefore(new CustomAuthorizationFilter(userTokensService,jwtProvider), UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
     //This is must if we want to stop generating security password by system!!!

@@ -6,7 +6,7 @@ import jakarta.persistence.*;
 @Table(name = "confirmationToken")
 public class ConfirmationToken {
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int cid;
     private String userVerifyToken;
     @OneToOne(fetch = FetchType.EAGER)

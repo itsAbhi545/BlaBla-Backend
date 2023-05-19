@@ -33,7 +33,7 @@ public class UserService implements UserDetailsService{
         Collection<SimpleGrantedAuthority> authorites=new ArrayList<>();
         return new org.springframework.security.core.userdetails.User(user.getEmail(), user.riderPassword(), authorites);
     }
-    public void updateUserProfile(User user){
-        userRepo.updateUserProfile(user);
-    }
+//    public void updateUserProfile(User user){
+//        userRepo.updateUserProfile(user);
+//    }
 }

@@ -1,5 +1,6 @@
 package com.example.BlaBlaBackend.Filters;
 
+import com.example.BlaBlaBackend.config.JwtProvider;
 import com.example.BlaBlaBackend.entity.UserTokens;
 import com.example.BlaBlaBackend.service.UserTokensService;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -22,9 +23,11 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 public class CustomAuthorizationFilter extends OncePerRequestFilter {
     private final UserTokensService userTokensService;
+    private final JwtProvider jwtProvider;
 
-    public CustomAuthorizationFilter(UserTokensService userTokensService) {
+    public CustomAuthorizationFilter(UserTokensService userTokensService, JwtProvider jwtProvider) {
         this.userTokensService = userTokensService;
+        this.jwtProvider = jwtProvider;
     }
 
     @Override
@@ -39,10 +42,13 @@ public class CustomAuthorizationFilter extends OncePerRequestFilter {
             System.out.println( "\u001B[31m" + request.getServletPath() + "\u001B[0m");
             filterChain.doFilter(request,response);
         }else{
-
-            String token = request.getHeader("Authorization").substring(7);
-            UserTokens userTokens = (token==null)?null:userTokensService.findUserTokensByToken(token);
-            if(userTokens==null){
+            String token = request.getHeader("Authorization");
+            UserTokens userTokens = (token==null)?null:userTokensService.findUserTokensByToken(token.substring(7));
+            if(userTokens==null|| !jwtProvider.validateToken(token.substring(7))){
+                //then i will simply delete the token
+                if(userTokens!=null) {
+                    userTokensService.deleteUserTokensByToken(token.substring(7));
+                }
                 Map<String,String> error=new HashMap<>();
                 error.put("error_message","Please provide valid token");
                 response.setContentType(APPLICATION_JSON_VALUE);
