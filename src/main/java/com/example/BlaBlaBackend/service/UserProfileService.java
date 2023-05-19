@@ -16,6 +16,9 @@ public class UserProfileService{
     public UserProfile saveUserProfile(UserProfile userProfile){
         return userProfileRepo.save(userProfile);
     }
+    public void updateUserProfile(UserProfile userProfile,int user){
+        userProfileRepo.updateUserProfile(userProfile,user);
+    }
     public void updateUserImage(String url,int user){
         userProfileRepo.updateUserImage(url,user);
     }

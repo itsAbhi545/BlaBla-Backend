@@ -17,6 +17,7 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
@@ -56,7 +57,7 @@ public class UserController {
     //route for creating the rider
     @PostMapping("/signup")
     @ResponseStatus(HttpStatus.CREATED)
-    public HashMap<Object,Object> createRider(@RequestBody @Valid UserDto userDto){
+    public HashMap<Object,Object> createUser(@RequestBody @Valid UserDto userDto){
 
         User user1  = objectMapper.convertValue(userDto,User.class);
         UserProfile userProfile = objectMapper.convertValue(userDto,UserProfile.class);
@@ -113,11 +114,17 @@ public class UserController {
 
     //route for updating the user profile
     @PatchMapping("/update/user")
-    public ApiResponse updateUser(UserProfile userProfile,Principal principal){
+    public ApiResponse updateUser(@Valid UserProfile userProfile, HttpServletRequest request){
+        if(userProfile.getPhoneNumber()==null)
+            throw new ApiException(HttpStatus.valueOf(400),"Please Enter Phone-Number");
         apiResponse.setMessage("User Updated Successfully!!");
-        apiResponse.setHttpStatus(HttpStatus.valueOf(204));
+        apiResponse.setHttpStatus(HttpStatus.valueOf(202));
+        String token = request.getHeader("Authorization").substring(7);
+        String uid = jwtProvider.getUsernameFromToken(token);
        // user.setEmail(principal.getName());
        // userService.updateUserProfile(user);
+        userProfileService.updateUserProfile(userProfile,Integer.parseInt(uid));
+//        String email = userProfile.getUser().getEmail();
         return  apiResponse;
     }
     //route for verifying the user!!!

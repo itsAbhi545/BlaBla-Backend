@@ -48,8 +48,9 @@ public class User {
     public String getEmail() {
         return email;
     }
-
-
+    public boolean userIsVerified(){
+        return this.isVerified;
+    }
     public void setEmail(String email) {
         this.email = email;
     }

@@ -1,7 +1,9 @@
 package com.example.BlaBlaBackend.service;
 
+import com.example.BlaBlaBackend.Exceptionhandling.ApiException;
 import com.example.BlaBlaBackend.entity.User;
 import com.example.BlaBlaBackend.repo.UserRepo;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -27,9 +29,13 @@ public class UserService implements UserDetailsService{
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         User user = (email!=null)?findUserByEmail(email):null;
+        System.out.println("User Service");
         if(user ==null){
             throw new UsernameNotFoundException("User not found!!!");
         }
+        //this condition will execute when user account is not verified
+      //  if(!user.userIsVerified()) throw new ApiException(HttpStatus.valueOf(401),"Please verify your Email");
+
         Collection<SimpleGrantedAuthority> authorites=new ArrayList<>();
         return new org.springframework.security.core.userdetails.User(user.getEmail(), user.riderPassword(), authorites);
     }
