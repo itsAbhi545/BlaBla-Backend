@@ -14,4 +14,5 @@ public class VehicleDetailsDto {
     String vehicleCompanyName;
     Integer vehicleCompanyId;
     String fuelType;
+
 }

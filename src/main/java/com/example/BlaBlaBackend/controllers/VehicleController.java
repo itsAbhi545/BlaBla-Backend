@@ -10,19 +10,22 @@ import com.example.BlaBlaBackend.service.UserService;
 import com.example.BlaBlaBackend.service.VehicleService;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
+import java.util.Arrays;
+import java.util.List;
 
 @RestController
 @Slf4j
+@RequestMapping("/api")
 public class VehicleController {
     @Autowired
     UserService userService;
@@ -32,33 +35,59 @@ public class VehicleController {
     ApiResponse apiResponse;
 
     @PostMapping("/addVehicle")
-    public ApiResponse addVehicle(@RequestBody VehicleDetailsDto vehicleDetailsDto, Principal principal) {
-        User user = userService.findUserByEmail(principal.getName());
+    public ApiResponse addVehicle(@RequestBody VehicleDetailsDto vehicleDetailsDto, HttpServletRequest request, Principal principal) {
+        try {
+            Integer vehicleId = Integer.parseInt(request.getParameter("vehicleId"));
+            Vehicle vehicle = vehicleService.getVehicleById(vehicleId);
+            try{
+                User user = userService.findUserByEmail(principal.getName());
+                VehicleDetails vehicleDetails = new VehicleDetails();
+                BeanUtils.copyProperties(vehicleDetailsDto, vehicleDetails);
+                vehicleDetails.setUser(user);
+                vehicleDetails.setVehicle(vehicle);
+                vehicleDetails = vehicleService.saveVehicleDetails(vehicleDetails);
+                return new ApiResponse("Vehicle Added successfully", vehicleDetails, HttpStatus.CREATED);
+            }catch (Exception e) {
+                String message = "";
+                if(principal != null) {
+                    message = "Vehicle Table Not Exist Or Duplicate Number Plate Found";
+                }else {
+                    message = "User Is Not Authenticated";
+                }
+                return new ApiResponse(message, null, HttpStatus.BAD_REQUEST);
+            }
 
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
+        }catch (Exception e) {
+            return new ApiResponse("Please Select a Vehicle to continue", null, HttpStatus.BAD_REQUEST);
+        }
 
-        Vehicle vehicle = mapper.convertValue(vehicleDetailsDto, Vehicle.class);
-        VehicleDetails vehicleDetails = mapper.convertValue(vehicleDetailsDto, VehicleDetails.class);
-        VehicleCompany vehicleCompany = mapper.convertValue(vehicleDetailsDto, VehicleCompany.class);
-
-        vehicleDetails.setVehicle(vehicle);
-        vehicleDetails.setUser(user);
-
-        vehicle.setVehicleCompany(vehicleCompany);
-        log.info("\u001B[44m"  + "vehicle = " +  vehicle + "\u001B[0m");
-        log.info("\u001B[44m"  + "vehicleCompany = "+ vehicleCompany + "\u001B[0m");
-        log.info("\u001B[44m"  + "vehicleDetails = "+ vehicleDetails + "\u001B[0m");
-
-        vehicleService.saveVehicleDetails(vehicleDetails);
-
-
-
-        apiResponse.setMessage("User Added Successfully");
-        apiResponse.setData(vehicleDetails);
-        apiResponse.setHttpStatus(HttpStatus.CREATED);
-
-        return apiResponse;
     }
+
+    @DeleteMapping("/deleteVehicle")
+    public ApiResponse deleteVehicle(Principal principal, @RequestParam("vehicleId")@ModelAttribute Integer[] vehicleIdArray) {
+        try {
+            Arrays.sort(vehicleIdArray);
+            log.info("VehicleIdArray = {}");
+            for(Integer vehicleId : vehicleIdArray) {
+                System.out.println("val= " + vehicleId);
+            }
+
+
+            User user = userService.findUserByEmail(principal.getName());
+            List<VehicleDetails> vehicleDetailsList = vehicleService.getVehicleDetailsByUser(user);
+            for(VehicleDetails vehicleDetails : vehicleDetailsList) {
+                Integer index = Arrays.binarySearch(vehicleIdArray, vehicleDetails.getVehicle().getId());
+                if(index >= 0) {
+                    Vehicle vehicle = vehicleService.getVehicleById(vehicleIdArray[index]);
+                    vehicleService.deleteVehicleDetailsByUserAndVehicle(user, vehicle);
+                }
+            }
+            return new ApiResponse("User Deleted Following Vehicle SuccessFully : ", null , HttpStatus.OK);
+
+        } catch (Exception e) {
+            return new ApiResponse("Vehicle Does Not Added to The User", null, HttpStatus.BAD_REQUEST);
+        }
+    }
+
 
 }

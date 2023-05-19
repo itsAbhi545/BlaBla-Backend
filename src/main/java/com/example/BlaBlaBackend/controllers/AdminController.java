@@ -48,14 +48,17 @@ public class AdminController {
                 vehicleCompany = vehicleService.getVehicleCompanyById(vehicleDetailsDto.getVehicleCompanyId());
             }else {
                 vehicleCompany = vehicleService.getVehicleCompanyByVehicleCompanyName(vehicleDetailsDto.getVehicleCompanyName());
+                if(vehicleCompany == null) {
+                    vehicleCompany = VehicleCompany.builder().vehicleCompanyName(vehicleDetailsDto.getVehicleCompanyName()).build();
+                }
             }
         }
-
-
-
         vehicle.setVehicleCompany(vehicleCompany);
-
+        try{
         vehicleService.saveVehicle(vehicle);
+        }catch (Exception e) {
+            return new ApiResponse("Vehicle already Exist", null, HttpStatus.BAD_REQUEST);
+        }
         return new  ApiResponse("Vehicle Created Successfully", null, HttpStatus.CREATED);
 
     }

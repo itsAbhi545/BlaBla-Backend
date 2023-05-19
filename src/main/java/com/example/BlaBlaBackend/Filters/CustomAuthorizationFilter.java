@@ -43,8 +43,8 @@ public class CustomAuthorizationFilter extends OncePerRequestFilter {
             filterChain.doFilter(request,response);
         }else{
             System.out.println("control reaches here" + request.getServletPath() + "////");
-            String token = request.getHeader("Authorization").substring(7);
-            UserTokens userTokens = (token==null)?null:userTokensService.findUserTokensByToken(token);
+            String token = request.getHeader("Authorization");
+            UserTokens userTokens = (token==null)?null:userTokensService.findUserTokensByToken(token.substring(7));
             if(userTokens==null){
                 Map<String,String> error=new HashMap<>();
                 error.put("error_message","Please provide valid token");

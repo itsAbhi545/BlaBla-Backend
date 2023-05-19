@@ -99,7 +99,7 @@ public class UserController {
     // Forgot Password
     @PostMapping("/forgetPassword")
 
-    public ApiResponse forgetPassword(@RequestParam("email") String email, Model model) throws MessagingException {
+    public ApiResponse forgetPassword(@RequestParam("email") String email) throws MessagingException {
         String url = currentDomain + "api/checkLinkPasswordReset/";
         //Added Random uuid
         PasswordReset passwordReset = passwordService.addUuidByEmail(email);
