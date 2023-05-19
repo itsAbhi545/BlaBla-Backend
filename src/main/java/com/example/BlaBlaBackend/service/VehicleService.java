@@ -7,19 +7,19 @@ import com.example.BlaBlaBackend.entity.VehicleDetails;
 import com.example.BlaBlaBackend.repo.VehicleCompanyRepo;
 import com.example.BlaBlaBackend.repo.VehicleDetailsRepo;
 import com.example.BlaBlaBackend.repo.VehicleRepo;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class VehicleService {
-    @Autowired
     VehicleDetailsRepo vehicleDetailsRepo;
-    @Autowired
     VehicleRepo vehicleRepo;
-    @Autowired
     VehicleCompanyRepo vehicleCompanyRepo;
+
     public VehicleDetails saveVehicleDetails(VehicleDetails vehicleDetails) {
         return vehicleDetailsRepo.save(vehicleDetails);
     }
