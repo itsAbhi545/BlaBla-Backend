@@ -71,8 +71,6 @@ public class VehicleController {
             for(Integer vehicleId : vehicleIdArray) {
                 System.out.println("val= " + vehicleId);
             }
-
-
             User user = userService.findUserByEmail(principal.getName());
             List<VehicleDetails> vehicleDetailsList = vehicleService.getVehicleDetailsByUser(user);
             for(VehicleDetails vehicleDetails : vehicleDetailsList) {
