@@ -14,11 +14,14 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
-@RequiredArgsConstructor
 public class VehicleService {
+    @Autowired
     VehicleDetailsRepo vehicleDetailsRepo;
+    @Autowired
     VehicleRepo vehicleRepo;
+    @Autowired
     VehicleCompanyRepo vehicleCompanyRepo;
+
 
     public VehicleDetails saveVehicleDetails(VehicleDetails vehicleDetails) {
         return vehicleDetailsRepo.save(vehicleDetails);
@@ -40,6 +43,7 @@ public class VehicleService {
         return vehicleCompanyRepo.findAll();
     }
     public Vehicle getVehicleById(Integer id) {
+        System.out.println("vehicle = in service " + id);
         return vehicleRepo.findById(id).get();
     }
     public List<Vehicle> getVehicleByVehicleCompany(VehicleCompany vehicleCompany) {
