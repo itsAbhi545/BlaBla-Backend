@@ -19,6 +19,8 @@ public class UserDto {
     private String gender="MALE";
     @NotNull(message = "DateOfBirth can't be null")
     private  String dob;
+    @Pattern(regexp = Regex.PHONENUMBER)
+    private String phoneNumber;
 
     public String getFirstName() {
         return firstName;
@@ -34,6 +36,14 @@ public class UserDto {
 
     public void setLastName(String lastName) {
         this.lastName = lastName;
+    }
+
+    public String getPhoneNumber() {
+        return phoneNumber;
+    }
+
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
     }
 
     public String getEmail() {

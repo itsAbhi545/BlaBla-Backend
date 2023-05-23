@@ -4,10 +4,7 @@ import com.example.BlaBlaBackend.Dto.ApiResponse;
 import com.example.BlaBlaBackend.Dto.UserDto;
 import com.example.BlaBlaBackend.Exceptionhandling.ApiException;
 import com.example.BlaBlaBackend.config.JwtProvider;
-import com.example.BlaBlaBackend.entity.PasswordReset;
-import com.example.BlaBlaBackend.entity.User;
-import com.example.BlaBlaBackend.entity.UserProfile;
-import com.example.BlaBlaBackend.entity.UserTokens;
+import com.example.BlaBlaBackend.entity.*;
 import com.example.BlaBlaBackend.service.ConfirmationTokenService;
 import com.example.BlaBlaBackend.service.UserProfileService;
 import com.example.BlaBlaBackend.service.EmailService;
@@ -22,11 +19,13 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
@@ -47,19 +46,26 @@ public class UserController {
     private final UserTokensService userTokensService;
     private final PasswordService passwordService;
     private final EmailService emailService;
+    private final ObjectMapper objectMapper;
+    private final ConfirmationTokenService confirmationTokenService;
+    private final UserProfileService userProfileService;
 
     @Value("${address}")
     String currentDomain;
     //private final ObjectMapper objectMapper;
 
-    public UserController(UserService userService, JwtProvider jwtProvider, UserTokensService userTokensService, ApiResponse apiResponse, PasswordService passwordService, EmailService emailService) {
+
+    public UserController(UserService userService, ApiResponse apiResponse, JwtProvider jwtProvider, UserTokensService userTokensService, PasswordService passwordService, EmailService emailService, ObjectMapper objectMapper, ConfirmationTokenService confirmationTokenService, UserProfileService userProfileService) {
         this.userService = userService;
         this.apiResponse = apiResponse;
         this.jwtProvider = jwtProvider;
         this.userTokensService = userTokensService;
+        this.passwordService = passwordService;
+        this.emailService = emailService;
+        this.objectMapper = objectMapper;
         this.confirmationTokenService = confirmationTokenService;
+        this.userProfileService = userProfileService;
     }
-
 
     //route for creating the rider
     @PostMapping("/signup")
@@ -107,10 +113,9 @@ public class UserController {
     }
     //route for verifying the user by email
     @PostMapping("/verify-user/email")
-    public ApiResponse userExist(@RequestBody String email){
+    public ApiResponse userExist(String email){
         System.out.println("\u001B[31m"+email+"\u001B[0m");
         User user = userService.findUserByEmail(email);
-        System.out.println(email);
         if(user!=null){
             throw  new ApiException(HttpStatus.valueOf(403),"User Already Exist!!!");
         }
@@ -120,7 +125,7 @@ public class UserController {
     }
     //route for updating the user profile
     @PatchMapping("/update/user")
-    public ApiResponse updateUser(@Valid UserProfile userProfile, HttpServletRequest request){
+    public ApiResponse updateUser(@Valid UserProfile userProfile, HttpServletRequest request,Principal principal){
         if(userProfile.getPhoneNumber()==null)
             throw new ApiException(HttpStatus.valueOf(400),"Please Enter Phone-Number");
         apiResponse.setMessage("User Updated Successfully!!");
@@ -130,12 +135,17 @@ public class UserController {
        // user.setEmail(principal.getName());
        // userService.updateUserProfile(user);
         userProfileService.updateUserProfile(userProfile,Integer.parseInt(uid));
+        log.info("User Updated Successfully!!!");
+        UserDto userDto = new UserDto();
+        BeanUtils.copyProperties(userProfile,userDto);
+        userDto.setPhoneNumber(userProfile.getPhoneNumber());
+        userDto.setEmail(principal.getName());
+        apiResponse.setData(userDto);
 //        String email = userProfile.getUser().getEmail();
         return  apiResponse;
     }
     // Forgot Password
     @PostMapping("/forgetPassword")
-
     public ApiResponse forgetPassword(@RequestParam("email") String email) throws MessagingException {
         String url = currentDomain + "api/checkLinkPasswordReset/";
         //Added Random uuid
@@ -154,25 +164,7 @@ public class UserController {
         apiResponse.setMessage("Verification Link Send Successfully");
         return  apiResponse;
     }
-    @GetMapping("/checkLinkPasswordReset/{token}")
-    public ApiResponse forgetPassword(@PathVariable("token") String token,
-                                 @RequestParam("email")String email){
-        System.out.println("scavsghavsavscaghv");
-        String tokenFinal = passwordService.getByEmail(email).getUuid();
 
-        if((tokenFinal != null) && (tokenFinal.equals(token))){
-            log.info("\u001B[41m" + "here"+ "\u001B[0m");
-            PasswordReset passwordReset = passwordService.getByEmail(email);
-            passwordReset.setIsVerify(true);
-            passwordService.savePasswordReset(passwordReset);
-            passwordService.deleteTokenByEmail(email);
-            apiResponse.setMessage("Link Verified Successfully");
-            apiResponse.setHttpStatus(HttpStatus.CONTINUE);
-
-            return apiResponse;
-        }
-       throw new ApiException(HttpStatus.BAD_REQUEST, "Link does not Matched");
-    }
     @PostMapping("/resetPassword")
     public ApiResponse resetPassword(@RequestParam("email") String email,HttpServletRequest request) {
         String newPassword = request.getParameter("password");
@@ -227,7 +219,7 @@ public class UserController {
     }
     //route for uploading user avatar!!!!
     @PostMapping("/upload/user-image")
-    public ApiResponse uploadImage(@RequestParam("image") MultipartFile file,HttpServletRequest request) throws IOException {
+    public ApiResponse uploadImage(@RequestParam("image") MultipartFile file, HttpServletRequest request) throws IOException {
         String folder = "/springBoot projects/BlaBla-Backend/src/main/java/images/";
         byte[] bytes = file.getBytes();
         String token = request.getHeader("Authorization").substring(7);
