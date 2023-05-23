@@ -17,6 +17,7 @@ public class RideService {
         return rideRepo.save(ride);
     }
     public List<Ride> searchRide(RideDto rideDto) {
-         return null;
+        rideRepo.calculateDistance(rideDto);
+        return null;
     }
 }

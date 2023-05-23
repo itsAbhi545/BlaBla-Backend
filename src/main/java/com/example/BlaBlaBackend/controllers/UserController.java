@@ -1,6 +1,7 @@
 package com.example.BlaBlaBackend.controllers;
 
 import com.example.BlaBlaBackend.Dto.ApiResponse;
+import com.example.BlaBlaBackend.Dto.PasswordResetDto;
 import com.example.BlaBlaBackend.Exceptionhandling.ApiException;
 import com.example.BlaBlaBackend.config.JwtProvider;
 import com.example.BlaBlaBackend.entity.PasswordReset;
@@ -100,12 +101,12 @@ public class UserController {
     @PostMapping("/forgetPassword")
 
     public ApiResponse forgetPassword(@RequestParam("email") String email) throws MessagingException {
-        String url = currentDomain + "api/checkLinkPasswordReset/";
+        String url = currentDomain + "/users/password/edit?token=";
         //Added Random uuid
         PasswordReset passwordReset = passwordService.addUuidByEmail(email);
 
         String token = passwordReset.getUuid();
-        url += token +  "?email=" + email;
+        url += token;
 
         String message = "<p>Click Below To Reset Your Password</p>\n" +
                 "\n" +
@@ -126,7 +127,7 @@ public class UserController {
         if((tokenFinal != null) && (tokenFinal.equals(token))){
             log.info("\u001B[41m" + "here"+ "\u001B[0m");
             PasswordReset passwordReset = passwordService.getByEmail(email);
-            passwordReset.setIsVerify(true);
+
             passwordService.savePasswordReset(passwordReset);
             passwordService.deleteTokenByEmail(email);
             apiResponse.setMessage("Link Verified Successfully");
@@ -137,26 +138,24 @@ public class UserController {
        throw new ApiException(HttpStatus.BAD_REQUEST, "Link does not Matched");
     }
     @PostMapping("/resetPassword")
-    public ApiResponse resetPassword(@RequestParam("email") String email,HttpServletRequest request) {
-        String newPassword = request.getParameter("password");
-        String cnfPassword = request.getParameter("cnfpassword");
+    public ApiResponse resetPassword(@RequestBody PasswordResetDto passwordResetDto) {
+        String newPassword = passwordResetDto.getPassword();
+        String cnfPassword = passwordResetDto.getPassword_confirmation();
         if(newPassword == null || cnfPassword == null) {
             apiResponse.setMessage("Please Enter The Password");
             return apiResponse;
         }
-        PasswordReset passwordReset = passwordService.getByEmail(email);
+        String token = passwordResetDto.getReset_password_token();
+        PasswordReset passwordReset = passwordService.getByToken(token);
         if(passwordReset != null) {
-            if (newPassword.equals(cnfPassword) && passwordReset.getIsVerify()) {
-                User user = userService.findUserByEmail(email);
+            if (newPassword.equals(cnfPassword)) {
+                User user = userService.findUserByEmail(passwordReset.getEmail());
                 user.setPassword(newPassword);
                 userService.saveUser(user);
 //            delete token
-                passwordService.deleteTokenByEmail(email);
+                passwordService.deleteTokenByEmail(passwordReset.getEmail());
                 apiResponse.setMessage("Password Reset Successfully");
                 apiResponse.setHttpStatus(HttpStatus.ACCEPTED);
-                return apiResponse;
-            } else if (!passwordReset.getIsVerify()) {
-                apiResponse.setMessage("Link Not Verified");
                 return apiResponse;
             } else {
                 apiResponse.setMessage("Password does Not Matched");

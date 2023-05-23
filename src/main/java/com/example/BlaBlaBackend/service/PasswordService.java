@@ -23,14 +23,19 @@ public class PasswordService {
          passwordReset = PasswordReset.builder()
                     .uuid(uuid)
                     .email(email)
-                    .isVerify(false)
+
                     .build();
         }
         passwordReset.setUuid(uuid);
         return passwordResetRepo.save(passwordReset);
     }
     public PasswordReset getByEmail(String email) {
-         return passwordResetRepo.getPasswordResetByEmail(email);
+
+        return passwordResetRepo.getPasswordResetByEmail(email);
+    }
+    public PasswordReset getByToken(String token) {
+        return passwordResetRepo.getPasswordResetByUuid(token);
+
     }
     public void deleteTokenByEmail(String email) {
         log.info("\u001B[41m" + "im here"+ "\u001B[0m");

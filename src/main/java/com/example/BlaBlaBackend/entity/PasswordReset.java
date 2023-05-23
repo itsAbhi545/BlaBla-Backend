@@ -19,6 +19,6 @@ public class PasswordReset {
     String email;
     String uuid;
 
-    @Column(columnDefinition = "boolean default false")
-    private Boolean isVerify;
+//    @Column(columnDefinition = "boolean default false")
+//    private Boolean isVerify;
 }
