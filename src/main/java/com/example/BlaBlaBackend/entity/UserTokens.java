@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
 @Table(name = "usertokens")
 public class UserTokens {
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
     @NotNull(message = "token can't be null")
     private String token;

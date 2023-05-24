@@ -16,8 +16,10 @@ public class RideService {
     public Ride saveRide(Ride ride) {
         return rideRepo.save(ride);
     }
-    public List<Ride> searchRide(RideDto rideDto) {
-        rideRepo.calculateDistance(rideDto);
-        return null;
+    public List<Ride> searchRide(RideDto rideDto, String minPrice, String maxPrice) {
+        Integer range = 10000;
+
+        return rideRepo.findAllRidesNearLocation(rideDto, range, minPrice, maxPrice);
     }
+
 }

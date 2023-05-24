@@ -4,8 +4,14 @@ import com.example.BlaBlaBackend.Dto.ApiResponse;
 import com.example.BlaBlaBackend.EntryPoint.CustomAuthenticationEntryPoint;
 import com.example.BlaBlaBackend.Filters.CustomAuthenticationFilter;
 import com.example.BlaBlaBackend.Filters.CustomAuthorizationFilter;
+import com.example.BlaBlaBackend.authenticationFailureHandler.CustomAuthenticationFailureHandler;
+import com.example.BlaBlaBackend.service.UserProfileService;
 import com.example.BlaBlaBackend.service.UserService;
 import com.example.BlaBlaBackend.service.UserTokensService;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -18,31 +24,37 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.access.intercept.AuthorizationFilter;
+import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-import org.springframework.web.servlet.config.annotation.CorsRegistry;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import java.util.Arrays;
+
 
 @Configuration
 @EnableWebSecurity
 public class SecConfig {
     private final UserDetailsService userDetailsService;
-    private final AuthenticationEntryPoint authenticationEntryPoint;
+    private final CustomAuthenticationEntryPoint authenticationEntryPoint;
     private final JwtProvider jwtProvider;
     private final UserService userService;
     private final UserTokensService userTokensService;
+    private final ObjectMapper objectMapper;
+    private final UserProfileService userProfileService;
+//    private final CustomAuthenticationFailureHandler authenticationFailureHandler;
+    
 
-    public SecConfig(UserDetailsService userDetailsService, AuthenticationEntryPoint authenticationEntryPoint, JwtProvider jwtProvider, UserService userService, UserTokensService userTokensService) {
+    public SecConfig(UserDetailsService userDetailsService, CustomAuthenticationEntryPoint authenticationEntryPoint, JwtProvider jwtProvider, UserService userService, UserTokensService userTokensService, ObjectMapper objectMapper, UserProfileService userProfileService) {
         this.userDetailsService = userDetailsService;
         this.authenticationEntryPoint = authenticationEntryPoint;
         this.jwtProvider = jwtProvider;
         this.userService = userService;
         this.userTokensService = userTokensService;
+        this.objectMapper = objectMapper;
+        this.userProfileService = userProfileService;
+//        this.authenticationFailureHandler = authenticationFailureHandler;
     }
 
     @Bean
@@ -51,8 +63,40 @@ public class SecConfig {
         //Authentication Entry point!!!
         authProvider.setUserDetailsService(userDetailsService);
         authProvider.setPasswordEncoder(NoOpPasswordEncoder.getInstance());
+        authProvider.setHideUserNotFoundExceptions(false);
         return authProvider;
     }
+    @Bean
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        CustomAuthenticationFilter filter=new CustomAuthenticationFilter(authenticationManager(http.getSharedObject(AuthenticationConfiguration.class)),jwtProvider,userService,userTokensService,objectMapper,userProfileService);
+        filter.setFilterProcessesUrl("/api/login");
+        http.csrf().disable().cors().configurationSource(corsConfigurationSource());
+        http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+        http.authorizeHttpRequests().requestMatchers("/api/login","/api/signup","/health-check","/favicon.ico","/error").permitAll();
+        http.authorizeHttpRequests().requestMatchers("/api/verify-user/email","/api/confirm-account/*").permitAll();
+        http.authorizeHttpRequests().requestMatchers("/api/forgetPassword","/api/resetPassword").permitAll();
+
+        http.authorizeHttpRequests().anyRequest().authenticated();
+//        .and().formLogin()
+//                .failureHandler(authenticationFailureHandler());
+        http.addFilter(filter);
+        //http.exceptionHandling().AuthenticationFailureHandler(AuthenticationFailureHandler);
+//        http.exceptionHandling()
+        http.exceptionHandling().authenticationEntryPoint(new CustomAuthenticationEntryPoint());
+        http.addFilterBefore(new CustomAuthorizationFilter(userTokensService,jwtProvider), UsernamePasswordAuthenticationFilter.class);
+        
+        return http.build();
+    }
+    //This is must if we want to stop generating security password by system!!!
+    @Bean
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
+        return authenticationConfiguration.getAuthenticationManager();
+    }
+    @Bean
+    public ApiResponse createApiResponse(){
+        return new ApiResponse();
+    }
+
     @Bean
     CorsConfigurationSource corsConfigurationSource() {
         final var configuration = new CorsConfiguration();
@@ -68,32 +112,9 @@ public class SecConfig {
 
         return source;
     }
-    @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        CustomAuthenticationFilter filter=new CustomAuthenticationFilter(authenticationManager(http.getSharedObject(AuthenticationConfiguration.class)),jwtProvider,userService,userTokensService);
-        filter.setFilterProcessesUrl("/api/login");
-        http.csrf().disable().cors().configurationSource(corsConfigurationSource());
 
-        http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-        http.authorizeHttpRequests().requestMatchers("/api/login","/api/signup","/health-check","/favicon.ico","/error").permitAll();
-        http.authorizeHttpRequests().requestMatchers("/api/verify-user/email").permitAll();
-        http.authorizeHttpRequests().requestMatchers("/api/forgetPassword").permitAll();
-        http.authorizeHttpRequests().requestMatchers("/api/checkLinkPasswordReset/**").permitAll();
-        http.authorizeHttpRequests().requestMatchers("/api/resetPassword/**").permitAll();
-
-        http.authorizeHttpRequests().anyRequest().authenticated();
-        http.addFilter(filter);
-//        http.exceptionHandling().authenticationEntryPoint(authenticationEntryPoint);
-        http.addFilterBefore(new CustomAuthorizationFilter(userTokensService), UsernamePasswordAuthenticationFilter.class);
-        return http.build();
-    }
-    //This is must if we want to stop generating security password by system!!!
     @Bean
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
-        return authenticationConfiguration.getAuthenticationManager();
-    }
-    @Bean
-    public ApiResponse createApiResponse(){
-        return new ApiResponse();
+    public AuthenticationFailureHandler authenticationFailureHandler() {
+        return new CustomAuthenticationFailureHandler();
     }
 }

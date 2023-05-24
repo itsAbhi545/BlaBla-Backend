@@ -1,5 +1,6 @@
 package com.example.BlaBlaBackend.Filters;
 
+import com.example.BlaBlaBackend.config.JwtProvider;
 import com.example.BlaBlaBackend.entity.UserTokens;
 import com.example.BlaBlaBackend.service.UserTokensService;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -22,9 +23,11 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 public class CustomAuthorizationFilter extends OncePerRequestFilter {
     private final UserTokensService userTokensService;
+    private final JwtProvider jwtProvider;
 
-    public CustomAuthorizationFilter(UserTokensService userTokensService) {
+    public CustomAuthorizationFilter(UserTokensService userTokensService, JwtProvider jwtProvider) {
         this.userTokensService = userTokensService;
+        this.jwtProvider = jwtProvider;
     }
 
     @Override
@@ -33,19 +36,19 @@ public class CustomAuthorizationFilter extends OncePerRequestFilter {
         System.out.println(request.getServletPath()+"///");
         if(request.getServletPath().equals("/api/login")||request.getServletPath().equals("/api/signup")||
         request.getServletPath().equals("/health-check")||request.getServletPath().equals("/favicon.ico")
-        ||request.getServletPath().equals("/error")||request.getServletPath().equals("/api/verify-user/email")
-        ||request.getServletPath().equals("/api/forgetPassword")
-        ||request.getServletPath().contains("/api/checkLinkPasswordReset") || request.getServletPath().contains("/api/resetPassword")
-
-        )
+        ||request.getServletPath().equals("/error")||request.getServletPath().equals("/api/verify-user/email")||
+        request.getServletPath().contains("/api/confirm-account"))
         {
             System.out.println( "\u001B[31m" + request.getServletPath() + "\u001B[0m");
             filterChain.doFilter(request,response);
         }else{
-            System.out.println("control reaches here" + request.getServletPath() + "////");
             String token = request.getHeader("Authorization");
             UserTokens userTokens = (token==null)?null:userTokensService.findUserTokensByToken(token.substring(7));
-            if(userTokens==null){
+            if(userTokens==null|| !jwtProvider.validateToken(token.substring(7))){
+                //then i will simply delete the token
+                if(userTokens!=null) {
+                    userTokensService.deleteUserTokensByToken(token.substring(7));
+                }
                 Map<String,String> error=new HashMap<>();
                 error.put("error_message","Please provide valid token");
                 response.setContentType(APPLICATION_JSON_VALUE);
@@ -60,4 +63,5 @@ public class CustomAuthorizationFilter extends OncePerRequestFilter {
             filterChain.doFilter(request,response);
         }
     }
+
 }

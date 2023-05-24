@@ -12,10 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
 import java.util.Date;
@@ -43,9 +40,20 @@ public class PublishRideController {
         return new ApiResponse("Ride Publish Successfully", ride, HttpStatus.CREATED);
     }
     @GetMapping("/search-ride")
-    public ApiResponse searchRide(@RequestBody RideDto rideDto) {
-        List<Ride> rideList = rideService.searchRide(rideDto);
-        return new ApiResponse("Ride List Generated Successfully !", rideList, HttpStatus.CREATED);
+    public ApiResponse searchRide(@RequestBody RideDto rideDto, HttpServletRequest request) {
+        String minPrice = request.getParameter("min-price");
+        String maxPrice = request.getParameter("max-price");
+        if(minPrice == null) {
+            minPrice = "0";
+        }if(maxPrice == null) {
+            maxPrice = "100000";
+        }
+        List<Ride> rideList = rideService.searchRide(rideDto, minPrice, maxPrice);
+
+        log.info("Length = " + rideList.size());
+
+        return new ApiResponse("Ride List Generated Successfully !", null, HttpStatus.CREATED);
     }
+
 
 }

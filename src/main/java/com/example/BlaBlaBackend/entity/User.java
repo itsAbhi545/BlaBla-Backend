@@ -4,6 +4,7 @@ import com.example.BlaBlaBackend.util.Regex;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
+import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.boot.autoconfigure.web.WebProperties;
@@ -30,6 +31,11 @@ public class User {
     @Column(columnDefinition = "boolean default false")
     private boolean isVerified;
 
+//    @OneToOne(mappedBy = "user",cascade = {CascadeType.ALL},fetch=FetchType.LAZY)
+//    private UserProfile profile;
+    @OneToOne(mappedBy="user",cascade = CascadeType.PERSIST,orphanRemoval = true)
+    private UserProfile profile;
+
     public int grabCurrentUserId() {
         return id;
     }
@@ -42,8 +48,9 @@ public class User {
     public String getEmail() {
         return email;
     }
-
-
+    public boolean userIsVerified(){
+        return this.isVerified;
+    }
     public void setEmail(String email) {
         this.email = email;
     }
@@ -58,5 +65,18 @@ public class User {
 
     public void setId(int id) {
         this.id = id;
+    }
+
+
+    @Override
+    public String toString() {
+        return "User{" +
+                ", email='" + email + '\'' +
+                ", password='" + password + '\'' +
+                ", dateCreated=" + dateCreated +
+                ", lastUpdated=" + lastUpdated +
+                ", isVerified=" + isVerified +
+                ", profile=" + profile.getFirstName() +
+                '}';
     }
 }
