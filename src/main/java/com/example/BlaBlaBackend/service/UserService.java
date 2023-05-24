@@ -34,12 +34,9 @@ public class UserService implements UserDetailsService{
             throw new UsernameNotFoundException("User not found!!!");
         }
         //this condition will execute when user account is not verified
-      //  if(!user.userIsVerified()) throw new ApiException(HttpStatus.valueOf(401),"Please verify your Email");
+        if(!user.userIsVerified()) throw new ApiException(HttpStatus.valueOf(401),"Please verify your Email");
 
         Collection<SimpleGrantedAuthority> authorites=new ArrayList<>();
         return new org.springframework.security.core.userdetails.User(user.getEmail(), user.riderPassword(), authorites);
     }
-//    public void updateUserProfile(User user){
-//        userRepo.updateUserProfile(user);
-//    }
 }

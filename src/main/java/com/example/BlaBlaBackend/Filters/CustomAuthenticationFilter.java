@@ -21,6 +21,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
@@ -82,21 +83,21 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
         new ObjectMapper().writeValue(response.getOutputStream(),authToken);
     }
 
-//    @Override
-//    protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response, AuthenticationException failed) throws IOException, ServletException {
-//     //   AuthenticationFailureHandler
-//
-//        response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-//        response.setStatus(HttpServletResponse.SC_FORBIDDEN);
-//        Map<String, Object> map = new HashMap<>();
-//        // System.out.println();
-//        map.put("message", failed.getLocalizedMessage());
-//        map.put("code", 401);
-//        map.put("msg", failed.getMessage());
-//        map.put("path", request.getServletPath());
-//        map.put("timestamp", System.currentTimeMillis());
-//        response.setContentType("application/json");
-//        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-//        new ObjectMapper().writeValue(response.getOutputStream(),map);
-//    }
+    @Override
+    protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response, AuthenticationException failed) throws IOException, ServletException {
+     //   AuthenticationFailureHandler
+        response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+        response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+        Map<String, Object> error = new HashMap<>();
+        error.put("message", failed.getLocalizedMessage());
+        if(failed instanceof UsernameNotFoundException){
+            error.put("message","Bad Credentials");
+        }
+        error.put("code", 401);
+        error.put("path", request.getServletPath());
+        error.put("timestamp", System.currentTimeMillis());
+        response.setContentType("application/json");
+        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+        new ObjectMapper().writeValue(response.getOutputStream(),error);
+    }
 }

@@ -40,4 +40,8 @@ public class PasswordService {
     public PasswordReset savePasswordReset(PasswordReset passwordReset){
         return passwordResetRepo.save(passwordReset);
     }
+    public PasswordReset getByToken(String token) {
+        return passwordResetRepo.getPasswordResetByUuid(token);
+
+    }
 }

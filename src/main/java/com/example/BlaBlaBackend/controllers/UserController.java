@@ -1,6 +1,7 @@
 package com.example.BlaBlaBackend.controllers;
 
 import com.example.BlaBlaBackend.Dto.ApiResponse;
+import com.example.BlaBlaBackend.Dto.PasswordResetDto;
 import com.example.BlaBlaBackend.Dto.UserDto;
 import com.example.BlaBlaBackend.Exceptionhandling.ApiException;
 import com.example.BlaBlaBackend.config.JwtProvider;
@@ -70,8 +71,7 @@ public class UserController {
     //route for creating the rider
     @PostMapping("/signup")
     @ResponseStatus(HttpStatus.CREATED)
-    public HashMap<Object,Object> createUser(@RequestBody @Valid UserDto userDto){
-
+    public ApiResponse createUser(@RequestBody @Valid UserDto userDto){
         User user1  = objectMapper.convertValue(userDto,User.class);
         UserProfile userProfile = objectMapper.convertValue(userDto,UserProfile.class);
 
@@ -85,21 +85,11 @@ public class UserController {
         //saving the user profile
         userProfileService.saveUserProfile(userProfile);
 
-        UserTokens userTokens = new UserTokens();
-        userTokens.setUserId(user1);
-        userTokens.setToken(jwtProvider.generateToken(user1.getEmail()));
-        userTokensService.saveUserToken(userTokens);
-
         //saving the user confirmation Token
         UUID uuid = UUID.randomUUID();
         ConfirmationToken confirmationToken = new ConfirmationToken(uuid.toString(),user1);
         confirmationTokenService.saveConfirmationToken(confirmationToken);
-
-        HashMap<Object,Object> response = new HashMap<>();
-        response.put("token",userTokens.getToken());
-
-        response.put("details",apiResponse);
-        return response;
+        return apiResponse;
     }
     //route for deleting the user
     @PostMapping("/logout")
@@ -112,7 +102,8 @@ public class UserController {
         return apiResponse;
     }
     //route for verifying the user by email
-    @PostMapping("/verify-user/email")
+
+    @PostMapping("/check/user-email-exist")
     public ApiResponse userExist(String email){
         System.out.println("\u001B[31m"+email+"\u001B[0m");
         User user = userService.findUserByEmail(email);
@@ -147,12 +138,12 @@ public class UserController {
     // Forgot Password
     @PostMapping("/forgetPassword")
     public ApiResponse forgetPassword(@RequestParam("email") String email) throws MessagingException {
-        String url = currentDomain + "api/checkLinkPasswordReset/";
+        String url = currentDomain + "/users/password/edit?token=";
         //Added Random uuid
         PasswordReset passwordReset = passwordService.addUuidByEmail(email);
 
         String token = passwordReset.getUuid();
-        url += token +  "?email=" + email;
+        url += token;
 
         String message = "<p>Click Below To Reset Your Password</p>\n" +
                 "\n" +
@@ -164,28 +155,25 @@ public class UserController {
         apiResponse.setMessage("Verification Link Send Successfully");
         return  apiResponse;
     }
-
     @PostMapping("/resetPassword")
-    public ApiResponse resetPassword(@RequestParam("email") String email,HttpServletRequest request) {
-        String newPassword = request.getParameter("password");
-        String cnfPassword = request.getParameter("cnfpassword");
+    public ApiResponse resetPassword(@RequestBody PasswordResetDto passwordResetDto) {
+        String newPassword = passwordResetDto.getPassword();
+        String cnfPassword = passwordResetDto.getPassword_confirmation();
         if(newPassword == null || cnfPassword == null) {
             apiResponse.setMessage("Please Enter The Password");
             return apiResponse;
         }
-        PasswordReset passwordReset = passwordService.getByEmail(email);
+        String token = passwordResetDto.getReset_password_token();
+        PasswordReset passwordReset = passwordService.getByToken(token);
         if(passwordReset != null) {
-            if (newPassword.equals(cnfPassword) && passwordReset.getIsVerify()) {
-                User user = userService.findUserByEmail(email);
+            if (newPassword.equals(cnfPassword)) {
+                User user = userService.findUserByEmail(passwordReset.getEmail());
                 user.setPassword(newPassword);
                 userService.saveUser(user);
 //            delete token
-                passwordService.deleteTokenByEmail(email);
+                passwordService.deleteTokenByEmail(passwordReset.getEmail());
                 apiResponse.setMessage("Password Reset Successfully");
                 apiResponse.setHttpStatus(HttpStatus.ACCEPTED);
-                return apiResponse;
-            } else if (!passwordReset.getIsVerify()) {
-                apiResponse.setMessage("Link Not Verified");
                 return apiResponse;
             } else {
                 apiResponse.setMessage("Password does Not Matched");
@@ -198,13 +186,10 @@ public class UserController {
         }
     }
     //route for verifying the user!!!
-    @GetMapping("/confirm-account/{token}")
+    @PostMapping("/verify-user/email/{token}")
     public ApiResponse ConfirmUserAccount(@PathVariable String token){
-        if(token==null) throw new ApiException(HttpStatus.BAD_REQUEST,"Enter Valid Token");
-        ConfirmationToken confirmationToken = confirmationTokenService.findConfirmationTokenByUserVerifyToken(token);
+        ConfirmationToken confirmationToken = (token==null)?null:confirmationTokenService.findConfirmationTokenByUserVerifyToken(token);
         if(confirmationToken==null) throw new ApiException(HttpStatus.BAD_REQUEST,"Enter Valid Token");
-        apiResponse.setHttpStatus(HttpStatus.OK);
-        apiResponse.setMessage("User verified Successfully!!");
 
         //verifying the user
         User user = confirmationToken.getUserId();
@@ -214,37 +199,72 @@ public class UserController {
 
         confirmationToken.setUserVerifyToken(null);
         confirmationTokenService.saveConfirmationToken(confirmationToken);
+       //creating a new user token!!
+        UserTokens userTokens = new UserTokens();
+        userTokens.setUserId(user);
+        //saving the user token
+        userTokens.setToken(jwtProvider.generateToken(Integer.toString(user.grabCurrentUserId())));
+        userTokensService.saveUserToken(userTokens);
+        //grab the current user-Profile
+        UserProfile userProfile = userProfileService.findUserProfileByUserId(user.grabCurrentUserId());
+        UserDto userDto = new UserDto();
 
+        //copying the user details in its dto
+        BeanUtils.copyProperties(userProfile,userDto);
+        userDto.setEmail(user.getEmail());
+
+        apiResponse.setHttpStatus(HttpStatus.OK);
+        apiResponse.setMessage("User verified Successfully!!");
+        apiResponse.setData(userDto);
         return apiResponse;
     }
     //route for uploading user avatar!!!!
     @PostMapping("/upload/user-image")
     public ApiResponse uploadImage(@RequestParam("image") MultipartFile file, HttpServletRequest request) throws IOException {
         String folder = "/springBoot projects/BlaBla-Backend/src/main/java/images/";
+        //String folder = "/images/";
         byte[] bytes = file.getBytes();
         String token = request.getHeader("Authorization").substring(7);
         String uid = jwtProvider.getUsernameFromToken(token);
+        String img_url = userProfileService.findUserProfileByUserId(Integer.parseInt(uid)).getUserImageUrl();
+        String randomId = (img_url==null)?UUID.randomUUID().toString():Helper.extractUUid(img_url);
        // System.out.println(uid+"///");
         //finding the extension of file!!!
         String fileExtension = Helper.findExtension(file.getOriginalFilename());
         // Path path = Paths.get(folder + file.getOriginalFilename());
-        String url = folder + uid + fileExtension;
+        String url = folder + randomId + fileExtension;
         Path path = Paths.get(url);
 
-        userProfileService.updateUserImage(url,Integer.parseInt(uid));
+        userProfileService.updateUserImage("/images/"+randomId+fileExtension,Integer.parseInt(uid));
         Files.write(path,bytes);
         apiResponse.setMessage("Image Uploaded Successfully!!");
         apiResponse.setHttpStatus(HttpStatus.valueOf(201));
         return apiResponse;
     }
     //route for displaying user image
-    @GetMapping(value ="/show/user-image",produces = MediaType.IMAGE_JPEG_VALUE)
-    public byte[] downloadImage(HttpServletRequest request) throws IOException {
+//    @GetMapping(value ="/show/user-image",produces = MediaType.IMAGE_JPEG_VALUE)
+//    public byte[] downloadImage(HttpServletRequest request) throws IOException {
+//        String token = request.getHeader("Authorization").substring(7);
+//        String uid =  jwtProvider.getUsernameFromToken(token);
+//        System.out.println("\u001B[34m" + uid + "\u001B[0m");
+//        String filePath = userProfileService.findUserProfileByUserId(Integer.parseInt(uid)).getUserImageUrl();
+//        if(filePath==null) throw new ApiException(HttpStatus.valueOf(400),"Please Upload your Image!!!");
+//        byte[] images = Files.readAllBytes(new File(filePath).toPath());
+//        return images;
+//    }
+    //route for displaying user image
+    @GetMapping(value = "/show/user-image")
+    public ApiResponse getUserImage_Url(HttpServletRequest request){
         String token = request.getHeader("Authorization").substring(7);
-        String uid =  jwtProvider.getUsernameFromToken(token);
-        System.out.println("\u001B[34m" + uid + "\u001B[0m");
-        String filePath = userProfileService.findUserProfileByUserId(Integer.parseInt(uid)).getUserImageUrl();
-        byte[] images = Files.readAllBytes(new File(filePath).toPath());
-        return images;
+        String uid = jwtProvider.getUsernameFromToken(token);
+        String userImageUrl = userProfileService.findUserProfileByUserId(Integer.parseInt(uid)).getUserImageUrl();
+        ApiResponse apiResponse = new ApiResponse();
+        apiResponse.setMessage("User Avatar Link");
+        apiResponse.setData("/images/c6c0b9b2-5162-4c01-9d57-e7921839ed19.jpg");
+        if(userImageUrl!=null)
+            apiResponse.setData(userImageUrl);
+        apiResponse.setMessage("User Avatar Link");
+        apiResponse.setHttpStatus(HttpStatus.OK);
+        return apiResponse;
     }
 }

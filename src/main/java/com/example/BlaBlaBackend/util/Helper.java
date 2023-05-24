@@ -8,4 +8,8 @@ public class Helper {
         //control never reach here
         return ".";
     }
+    public static String extractUUid(String imageUrl){
+        int idx = imageUrl.indexOf('.');
+        return imageUrl.substring(8,idx);
+    }
 }
