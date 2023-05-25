@@ -6,8 +6,7 @@ import com.example.BlaBlaBackend.entity.Ride;
 import com.example.BlaBlaBackend.repo.BookingRepo;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-
-import java.awt.print.Book;
+import java.util.List;
 
 @Service
 public class BookingService {
@@ -44,5 +43,8 @@ public class BookingService {
         ride.setSeatBooked(ride.getSeatBooked() - seats);
         rideService.saveRide(ride);
         return bookingRepo.save(bookingDetail);
+    }
+    public List<Booking> getBookingHistory(int userId){
+       return bookingRepo.getBookingHistory(userId);
     }
 }

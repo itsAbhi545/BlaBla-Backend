@@ -1,5 +1,6 @@
 package com.example.BlaBlaBackend.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
@@ -19,11 +20,12 @@ public class Booking {
     private int isAccepted;
     @CreationTimestamp
     private LocalDateTime bookDate;
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "rideId")
     private Ride rideId;
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "userId")
+    @JsonIgnoreProperties({"handler", "hibernateLazyInitializer"})
     private User userId;
 
     public int getBookingId() {

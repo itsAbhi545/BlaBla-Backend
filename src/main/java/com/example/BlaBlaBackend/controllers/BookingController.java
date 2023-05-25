@@ -12,6 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
+import java.util.List;
 
 
 @RestController
@@ -81,5 +82,11 @@ public class BookingController {
                 .httpStatus(HttpStatus.valueOf(200))
                 .data(booking1)
                 .build();
+    }
+    @GetMapping("/user/booking-history")
+    public List<Booking> getBookingHistory(HttpServletRequest request){
+        String token = request.getHeader("Authorization").substring(7);
+        String uid = jwtProvider.getUsernameFromToken(token);
+        return bookingService.getBookingHistory(Integer.parseInt(uid));
     }
 }
