@@ -19,4 +19,5 @@ public class RideService {
     public List<Ride> searchRide(RideDto rideDto) {
          return null;
     }
+    public Ride findRideById(int id){return rideRepo.findRideById(id);}
 }

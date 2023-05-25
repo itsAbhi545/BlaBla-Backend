@@ -9,4 +9,5 @@ import java.util.List;
 @Repository
 public interface RideRepo extends JpaRepository<Ride, Integer> {
     List<Ride> findRideBySourceAndDestination(String source, String Destination);
+    Ride findRideById(int id);
 }

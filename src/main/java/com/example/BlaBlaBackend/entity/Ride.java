@@ -1,6 +1,7 @@
 package com.example.BlaBlaBackend.entity;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
@@ -15,8 +16,9 @@ import java.time.LocalDateTime;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
+@JsonIgnoreProperties({"handler", "hibernateLazyInitializer"})
 public class Ride {
-    @Id
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
     @NotNull
@@ -35,12 +37,14 @@ public class Ride {
     private String add_city;
     private Integer set_price;
     private  String about_ride;
+    private int seatBooked=0;
 
     @OneToOne
     @JoinColumn(name ="vehicle_id")
     private Vehicle vehicle;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JsonIgnoreProperties({"handler", "hibernateLazyInitializer"})
     @JoinColumn(name = "userid")
     private User user;
     @CreationTimestamp
