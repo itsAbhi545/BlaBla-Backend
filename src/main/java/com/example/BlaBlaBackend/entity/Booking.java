@@ -15,6 +15,8 @@ public class Booking {
     private int bookingId;
     @Min(1) @Max(4)
     private int seats;
+    @Column(columnDefinition = "int default 0")
+    private int isAccepted;
     @CreationTimestamp
     private LocalDateTime bookDate;
     @ManyToOne(fetch = FetchType.LAZY)
@@ -68,5 +70,13 @@ public class Booking {
 
     public void setBookDate(LocalDateTime bookDate) {
         this.bookDate = bookDate;
+    }
+
+    public int isAccepted() {
+        return isAccepted;
+    }
+
+    public void setAccepted(int accepted) {
+        isAccepted = accepted;
     }
 }

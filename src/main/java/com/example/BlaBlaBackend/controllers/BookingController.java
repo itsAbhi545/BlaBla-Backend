@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
 
+
 @RestController
 @RequestMapping("/api")
 public class BookingController {
@@ -36,10 +37,10 @@ public class BookingController {
 
         //setting userId on booking
         booking.setUserId(Integer.parseInt(uid));
-      // booking.setRideId(ride);
-        Ride ride1 = rideService.findRideById(booking.getRideId().getId());
-        ride1.setAbout_ride("Heading from Chicago to San Francisco. Looking for companions.");
-        rideService.saveRide(ride1);
+//      // booking.setRideId(ride);
+//        Ride ride1 = rideService.findRideById(booking.getRideId().getId());
+//        ride1.setAbout_ride("Heading from Chicago to San Francisco. Looking for companions.");
+//        rideService.saveRide(ride1);
         Booking bookingDetail = bookingService.bookRide(booking);
         //Booking booking1 = bookingService.findBookingByBookingId(bookingDetail.getBookingId());
         //updating the ride!!!
@@ -54,5 +55,31 @@ public class BookingController {
     @GetMapping("/get/booking-detail/{id}")
     public Booking getBooKingDetail(@PathVariable Integer id){
         return bookingService.findBookingByBookingId(id);
+    }
+    //route for accepting/declining booking request
+    @PostMapping("/accept/ride/{bookingId}")
+    public ApiResponse acceptRide(@PathVariable Integer bookingId,HttpServletRequest request){
+        String token = request.getHeader("Authorization").substring(7);
+        String uid = jwtProvider.getUsernameFromToken(token);
+        Booking booking = bookingService.findBookingByBookingId(bookingId);
+        if(booking==null||booking.getRideId().getUser().grabCurrentUserId()!=Integer.parseInt(uid))
+            throw new ApiException(HttpStatus.valueOf(400),"You are not Authorized to accept this ride!!!");
+        String isAccepted =  request.getParameter("isAccepted");
+        //decline the ride!!!
+        if(isAccepted==null||isAccepted.equals("0")) {
+            Booking booking1 = bookingService.declineRide(booking);
+            return ApiResponse.builder()
+                    .message("Request for ride is declined Successfully!!")
+                    .httpStatus(HttpStatus.valueOf(200))
+                    .data(booking1)
+                    .build();
+        }
+        //accept the ride!!!
+        Booking booking1 = bookingService.acceptRide(booking);
+        return ApiResponse.builder()
+                .message("Request for ride is accepted Successfully!!")
+                .httpStatus(HttpStatus.valueOf(200))
+                .data(booking1)
+                .build();
     }
 }
