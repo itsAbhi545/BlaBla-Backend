@@ -1,8 +1,10 @@
 package com.example.BlaBlaBackend.Dto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import lombok.Builder;
 import org.springframework.http.HttpStatus;
 @JsonInclude(JsonInclude.Include.NON_NULL)
+@Builder
 public class ApiResponse{
     private  String message;
     private  Object data;

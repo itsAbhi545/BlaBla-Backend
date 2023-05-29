@@ -2,12 +2,18 @@ package com.example.BlaBlaBackend.entity;
 
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.datatype.jsr310.deser.LocalTimeDeserializer;
+import com.fasterxml.jackson.datatype.jsr310.ser.LocalTimeSerializer;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
+import java.time.LocalTime;
+
 
 @Entity
 @Table
@@ -33,11 +39,15 @@ public class Ride {
 
     private String destination_longitude;
 
-
     private int passengers_count;
     private String add_city;
     private Integer set_price;
+    private String date;
+    @JsonSerialize(using = LocalTimeSerializer.class)
+    @JsonDeserialize(using = LocalTimeDeserializer.class)
+    private LocalTime time;
     private  String about_ride;
+
     private int seatBooked;
 
     @OneToOne

@@ -1,7 +1,13 @@
 package com.example.BlaBlaBackend.Dto;
 
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.datatype.jsr310.deser.LocalTimeDeserializer;
+import com.fasterxml.jackson.datatype.jsr310.ser.LocalTimeSerializer;
 import lombok.*;
+
+import java.time.LocalTime;
 
 @Builder
 @Setter
@@ -19,7 +25,6 @@ public class RideDto {
 
         private String destination_longitude;
 
-
         private int passengers_count;
 
         private String add_city;
@@ -28,7 +33,9 @@ public class RideDto {
         private  String about_ride;
 
         private String date;
-        private String time;
+        @JsonSerialize(using = LocalTimeSerializer.class)
+        @JsonDeserialize(using = LocalTimeDeserializer.class)
+        private LocalTime time;
         private Select_route selectRoute;
 
         @Override

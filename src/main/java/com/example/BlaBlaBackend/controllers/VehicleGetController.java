@@ -44,20 +44,7 @@ public class VehicleGetController {
     }
     @GetMapping("/getUserVehicles")
     public ApiResponse getUserVehicles(Principal principal){
-        try{
-            User user = userService.findUserByEmail(principal.getName());
-            List<VehicleDetails> vehicleDetailsList = vehicleService.getVehicleDetailsByUser(user);
-
-            List<Vehicle> vehicleList =  new ArrayList<>();
-
-            vehicleDetailsList.forEach(vehicleDetails -> {
-                Vehicle vehicle = vehicleDetails.getVehicle();
-                log.warn("vehicle = " + vehicle.getName());
-                vehicleList.add(vehicle);
-            });
-            return new ApiResponse("Vehicle List for User " + user.getEmail() + " Generated !", vehicleList, HttpStatus.CREATED);
-        }catch (Exception e) {
-            return new ApiResponse("User Is Not Authenticated", null,HttpStatus.BAD_REQUEST);
-        }
+        List<Vehicle> vehicleList = vehicleService.getVehicleByUser(principal.getName());
+        return new ApiResponse("Vehicle List for User " + principal.getName() + " Generated !", vehicleList, HttpStatus.CREATED);
     }
 }
