@@ -7,7 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "UserPasswordReset", uniqueConstraints={@UniqueConstraint(columnNames={"email"})})
+@Table(name = "UserPasswordReset")
 @Data
 @Builder
 @NoArgsConstructor
@@ -16,9 +16,10 @@ public class PasswordReset {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     int id;
-    String email;
+    @OneToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "userId")
+    private User user;
     String uuid;
-
     @Column(columnDefinition = "boolean default false")
     private Boolean isVerify;
 }

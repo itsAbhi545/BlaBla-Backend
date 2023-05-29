@@ -74,6 +74,7 @@ public class SecConfig {
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
         http.authorizeHttpRequests().requestMatchers("/api/login","/api/signup","/health-check","/favicon.ico","/error").permitAll();
         http.authorizeHttpRequests().requestMatchers("/api/verify-user/email/*","/api/confirm-account/*","/images/**").permitAll();
+        http.authorizeHttpRequests().requestMatchers("/api/forgetPassword","/api/resetPassword").permitAll();
         http.authorizeHttpRequests().anyRequest().authenticated();
 //        .and().formLogin()
 //                .failureHandler(authenticationFailureHandler());

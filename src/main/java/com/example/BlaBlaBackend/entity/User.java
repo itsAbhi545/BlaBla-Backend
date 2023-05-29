@@ -4,12 +4,9 @@ import com.example.BlaBlaBackend.util.Regex;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
-import lombok.Builder;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
-import org.springframework.boot.autoconfigure.web.WebProperties;
 
 import java.time.LocalDateTime;
 
@@ -34,8 +31,6 @@ public class User {
     @Column(columnDefinition = "boolean default false")
     private boolean isVerified;
 
-    //    @OneToOne(mappedBy = "user",cascade = {CascadeType.ALL},fetch=FetchType.LAZY)
-//    private UserProfile profile;
     @OneToOne(mappedBy="user",cascade = CascadeType.PERSIST,orphanRemoval = true)
     private UserProfile profile;
 

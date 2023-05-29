@@ -1,6 +1,7 @@
 package com.example.BlaBlaBackend.service;
 
 import com.example.BlaBlaBackend.entity.PasswordReset;
+import com.example.BlaBlaBackend.entity.User;
 import com.example.BlaBlaBackend.repo.PasswordResetRepo;
 
 import lombok.extern.slf4j.Slf4j;
@@ -15,33 +16,33 @@ public class PasswordService {
     @Autowired
     PasswordResetRepo passwordResetRepo;
 
-    public PasswordReset addUuidByEmail(String email){
+    public PasswordReset addUuidByEmail(User user){
 
         String uuid = UUID.randomUUID().toString();
-        PasswordReset passwordReset = passwordResetRepo.getPasswordResetByEmail(email);
+        PasswordReset passwordReset = passwordResetRepo.getPasswordResetByUser(user);
         if(passwordReset == null) {
-         passwordReset = PasswordReset.builder()
+            passwordReset = PasswordReset.builder()
                     .uuid(uuid)
-                    .email(email)
-                    .isVerify(false)
+                    .user(user)
                     .build();
         }
         passwordReset.setUuid(uuid);
         return passwordResetRepo.save(passwordReset);
     }
-    public PasswordReset getByEmail(String email) {
-         return passwordResetRepo.getPasswordResetByEmail(email);
-    }
-    public void deleteTokenByEmail(String email) {
-        log.info("\u001B[41m" + "im here"+ "\u001B[0m");
+    public PasswordReset getByUser(User user) {
 
-        passwordResetRepo.deletePasswordResetByEmail(email);
-    }
-    public PasswordReset savePasswordReset(PasswordReset passwordReset){
-        return passwordResetRepo.save(passwordReset);
+        return passwordResetRepo.getPasswordResetByUser(user);
     }
     public PasswordReset getByToken(String token) {
         return passwordResetRepo.getPasswordResetByUuid(token);
 
+    }
+    public void deleteTokenByUser(User user) {
+        log.info("\u001B[41m" + "im here"+ "\u001B[0m");
+
+        passwordResetRepo.deletePasswordResetByUser(user);
+    }
+    public PasswordReset savePasswordReset(PasswordReset passwordReset){
+        return passwordResetRepo.save(passwordReset);
     }
 }

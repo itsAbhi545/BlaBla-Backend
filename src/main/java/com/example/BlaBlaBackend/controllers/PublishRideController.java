@@ -7,7 +7,6 @@ import com.example.BlaBlaBackend.entity.Vehicle;
 import com.example.BlaBlaBackend.service.RideService;
 import com.example.BlaBlaBackend.service.UserService;
 import com.example.BlaBlaBackend.service.VehicleService;
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +17,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.security.Principal;
-import java.util.Date;
 import java.util.List;
 
 @RestController

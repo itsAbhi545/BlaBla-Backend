@@ -1,6 +1,7 @@
 package com.example.BlaBlaBackend.entity;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
@@ -20,19 +21,18 @@ import java.time.LocalDateTime;
 public class Ride {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-
     @NotNull
     private String source;
     @NotNull
     private String destination;
-
+    @JsonIgnore
     private String source_latitude;
+    @JsonIgnore
     private String source_longitude;
+    @JsonIgnore
     private String destination_latitude;
-
+    @JsonIgnore
     private String destination_longitude;
-
-
     private int passengers_count;
     private String add_city;
     private Integer set_price;
