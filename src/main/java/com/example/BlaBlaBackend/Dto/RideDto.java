@@ -1,7 +1,8 @@
 package com.example.BlaBlaBackend.Dto;
 
 
-import com.example.BlaBlaBackend.TrimValidator.Trim;
+import com.example.BlaBlaBackend.customJsonDeserializer.Trim;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import lombok.*;
 
 @Builder
@@ -26,7 +27,7 @@ public class RideDto {
         @Trim
         private String destination_longitude;
 
-
+        @Trim
         private int passengers_count;
 
         @Trim

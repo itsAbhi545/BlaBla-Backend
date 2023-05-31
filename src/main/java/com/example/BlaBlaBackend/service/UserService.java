@@ -156,7 +156,7 @@ public class UserService implements UserDetailsService{
 
         //User user = userRepo.findUserByEmail(passwordReset.getUser().getEmail());
         User user = passwordReset.getUser();
-        user.setPassword(newPassword);
+//        user.setPassword(newPassword);
         userRepo.save(user);
 //       delete token
         passwordService.deleteTokenByUser(user);

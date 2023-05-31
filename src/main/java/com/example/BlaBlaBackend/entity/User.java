@@ -1,8 +1,8 @@
 package com.example.BlaBlaBackend.entity;
 
-import com.example.BlaBlaBackend.TrimValidator.Trim;
-import com.example.BlaBlaBackend.TrimValidator.WhiteSpaceRemovalDeserializer;
+import com.example.BlaBlaBackend.customJsonDeserializer.Trim;
 import com.example.BlaBlaBackend.util.Regex;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
@@ -25,9 +25,10 @@ public class User {
     @Trim
     @Column(unique = true)
     private String email;
-    @JsonDeserialize(using = WhiteSpaceRemovalDeserializer.class)
     @NotNull(message = "Password can't be null")
     @Pattern(regexp = Regex.PASSWORD,message = "Enter valid Password")
+    @Trim
+    @JsonIgnore
     private String password;
     @CreationTimestamp
     private LocalDateTime dateCreated; //epoctime

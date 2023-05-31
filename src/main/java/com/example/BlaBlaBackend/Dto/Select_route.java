@@ -1,6 +1,7 @@
 package com.example.BlaBlaBackend.Dto;
 
-import com.example.BlaBlaBackend.TrimValidator.Trim;
+import com.example.BlaBlaBackend.customJsonDeserializer.Trim;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
@@ -19,7 +20,6 @@ public class Select_route {
     }
 
      */
-
     @Trim
     private String road_name;
     Integer distance;

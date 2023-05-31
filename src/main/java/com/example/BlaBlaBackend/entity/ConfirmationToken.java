@@ -1,6 +1,5 @@
 package com.example.BlaBlaBackend.entity;
 
-import com.example.BlaBlaBackend.TrimValidator.Trim;
 import jakarta.persistence.*;
 
 @Entity
@@ -9,7 +8,7 @@ public class ConfirmationToken {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int cid;
-    @Trim
+
     private String userVerifyToken;
     @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "userId")

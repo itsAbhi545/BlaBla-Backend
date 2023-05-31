@@ -1,17 +1,16 @@
 package com.example.BlaBlaBackend.Dto;
 
-import com.example.BlaBlaBackend.TrimValidator.Trim;
+import com.example.BlaBlaBackend.customJsonDeserializer.Trim;
 import com.example.BlaBlaBackend.util.Regex;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import jakarta.validation.constraints.NotBlank;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class UserDto{
-    @Trim
     @NotEmpty(message = "FirstName can't be null")
+    @Trim
     private String firstName;
     @NotEmpty(message = "LastName can't be null")
     @Trim

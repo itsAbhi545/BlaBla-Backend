@@ -1,7 +1,7 @@
 package com.example.BlaBlaBackend.entity;
 
 
-import com.example.BlaBlaBackend.TrimValidator.Trim;
+import com.example.BlaBlaBackend.customJsonDeserializer.Trim;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;

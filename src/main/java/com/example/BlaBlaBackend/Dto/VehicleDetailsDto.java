@@ -1,6 +1,7 @@
 package com.example.BlaBlaBackend.Dto;
 
-import com.example.BlaBlaBackend.TrimValidator.Trim;
+import com.example.BlaBlaBackend.customJsonDeserializer.Trim;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import lombok.Builder;
 import lombok.Data;
 
@@ -13,7 +14,6 @@ public class VehicleDetailsDto {
     String color;
     @Trim
     String name;
-
     Integer seats;
     @Trim
     String vehicleCompanyName;
