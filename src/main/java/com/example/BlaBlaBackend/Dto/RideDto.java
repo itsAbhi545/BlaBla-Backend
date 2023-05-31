@@ -1,6 +1,8 @@
 package com.example.BlaBlaBackend.Dto;
 
 
+import com.example.BlaBlaBackend.TrimValidator.Trim;
+
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalTimeDeserializer;
@@ -14,13 +16,20 @@ import java.time.LocalTime;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
+@Trim({"source","destination"})
 public class RideDto {
+
         private int id;
+
+
         private String source;
+
         private String destination;
 
         private String source_latitude;
+
         private String source_longitude;
+
         private String destination_latitude;
 
         private String destination_longitude;

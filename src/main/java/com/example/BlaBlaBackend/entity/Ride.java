@@ -1,15 +1,22 @@
 package com.example.BlaBlaBackend.entity;
 
 
+import com.example.BlaBlaBackend.TrimValidator.Trim;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalTimeDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalTimeSerializer;
 import jakarta.persistence.*;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
+import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.annotations.ColumnTransformer;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.validator.constraints.UniqueElements;
 
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -28,9 +35,10 @@ public class Ride {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    @NotNull
+//    @NotBlank(message = "Source Cannot Be Null")
+
     private String source;
-    @NotNull
+    @NotBlank(message = "Destination Cannot Be Null")
     private String destination;
 
     private String source_latitude;
@@ -38,10 +46,12 @@ public class Ride {
     private String destination_latitude;
 
     private String destination_longitude;
-
+    @Min(1)
+    @NotNull(message = "Choose At-least One Passenger")
     private int passengers_count;
     private String add_city;
     private Integer set_price;
+    @NotBlank(message = "Enter a Valid Date")
     private String date;
     @JsonSerialize(using = LocalTimeSerializer.class)
     @JsonDeserialize(using = LocalTimeDeserializer.class)

@@ -4,10 +4,8 @@ import com.example.BlaBlaBackend.util.Regex;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
-import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
-import org.springframework.boot.autoconfigure.web.WebProperties;
 
 import java.time.LocalDateTime;
 
@@ -21,9 +19,14 @@ public class User {
     @Pattern(regexp = Regex.EMAIL,message = "Enter valid email")
     @Column(unique = true)
     private String email;
+
     @NotNull(message = "Password can't be null")
     @Pattern(regexp = Regex.PASSWORD,message = "Enter valid Password")
+
     private String password;
+
+
+
     @CreationTimestamp
     private LocalDateTime dateCreated; //epoctime
     @UpdateTimestamp

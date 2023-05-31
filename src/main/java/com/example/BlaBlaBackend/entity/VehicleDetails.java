@@ -2,6 +2,7 @@ package com.example.BlaBlaBackend.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 @Entity
@@ -14,6 +15,7 @@ public class VehicleDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Integer id;
+    @NotNull(message = "NumberPlate Cannot Be Null")
     @Column(columnDefinition = "varchar(100) not null", unique = true)
     String numberPlate;
     String color;
