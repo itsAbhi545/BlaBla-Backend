@@ -113,6 +113,7 @@ public class UserService implements UserDetailsService{
     }
     public User createUser(UserDto userDto){
         //User user1  = objectMapper.convertValue(userDto,User.class);
+
         User user = new User();
         UserProfile userProfile = new UserProfile();
         BeanUtils.copyProperties(userDto,user);

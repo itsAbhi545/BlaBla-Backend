@@ -1,25 +1,36 @@
 package com.example.BlaBlaBackend.Dto;
 
+import com.example.BlaBlaBackend.TrimValidator.Trim;
 import com.example.BlaBlaBackend.util.Regex;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
+
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class UserDto {
-    @NotNull(message = "FirstName can't be null")
+public class UserDto{
+    @Trim
+    @NotEmpty(message = "FirstName can't be null")
     private String firstName;
-    @NotNull(message = "LastName can't be null")
+    @NotEmpty(message = "LastName can't be null")
+    @Trim
     private String lastName;
-    @NotNull(message = "Email can't be null")
+    @NotEmpty(message = "Email can't be null")
     @Pattern(regexp = Regex.EMAIL,message = "Enter valid email")
+    @Trim
     private String email;
-    @NotNull(message = "Password can't be null")
+    @NotEmpty(message = "Password can't be null")
     @Pattern(regexp = Regex.PASSWORD,message = "Enter valid Password")
+    @Trim
     private String password;
+    @Trim
     private String gender="MALE";
-    @NotNull(message = "DateOfBirth can't be null")
+    @NotEmpty(message = "DateOfBirth can't be null")
+    @Trim
     private  String dob;
     @Pattern(regexp = Regex.PHONENUMBER)
+    @Trim
     private String phoneNumber;
 
     public String getFirstName() {

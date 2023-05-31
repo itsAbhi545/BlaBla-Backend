@@ -1,5 +1,6 @@
 package com.example.BlaBlaBackend.entity;
 
+import com.example.BlaBlaBackend.TrimValidator.Trim;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.*;
@@ -15,7 +16,9 @@ public class VehicleDetails {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Integer id;
     @Column(columnDefinition = "varchar(100) not null", unique = true)
+    @Trim
     String numberPlate;
+    @Trim
     String color;
 
     String fuelType;

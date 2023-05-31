@@ -1,5 +1,6 @@
 package com.example.BlaBlaBackend.Dto;
 
+import com.example.BlaBlaBackend.TrimValidator.Trim;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
@@ -19,6 +20,7 @@ public class Select_route {
 
      */
 
+    @Trim
     private String road_name;
     Integer distance;
     Integer duration;

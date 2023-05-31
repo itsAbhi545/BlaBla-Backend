@@ -1,6 +1,9 @@
 package com.example.BlaBlaBackend.entity;
 
+import com.example.BlaBlaBackend.TrimValidator.Trim;
+import com.example.BlaBlaBackend.TrimValidator.WhiteSpaceRemovalDeserializer;
 import com.example.BlaBlaBackend.util.Regex;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
@@ -19,8 +22,10 @@ public class User {
     private int id;
     @NotNull(message = "Email can't be null")
     @Pattern(regexp = Regex.EMAIL,message = "Enter valid email")
+    @Trim
     @Column(unique = true)
     private String email;
+    @JsonDeserialize(using = WhiteSpaceRemovalDeserializer.class)
     @NotNull(message = "Password can't be null")
     @Pattern(regexp = Regex.PASSWORD,message = "Enter valid Password")
     private String password;
@@ -37,7 +42,6 @@ public class User {
     public int grabCurrentUserId() {
         return id;
     }
-
 
     public void setVerified(boolean verified) {
         isVerified = verified;

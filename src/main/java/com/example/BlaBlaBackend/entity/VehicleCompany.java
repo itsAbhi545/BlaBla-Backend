@@ -1,5 +1,6 @@
 package com.example.BlaBlaBackend.entity;
 
+import com.example.BlaBlaBackend.TrimValidator.Trim;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
@@ -21,6 +22,7 @@ public class VehicleCompany {
     Integer id;
 
     @Column(columnDefinition = "varchar(100) not null", unique = true)
+    @Trim
     String vehicleCompanyName;
 
     @OneToMany(mappedBy = "vehicleCompany", cascade = CascadeType.REMOVE,fetch = FetchType.LAZY)

@@ -1,5 +1,6 @@
 package com.example.BlaBlaBackend.entity;
 
+import com.example.BlaBlaBackend.TrimValidator.Trim;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

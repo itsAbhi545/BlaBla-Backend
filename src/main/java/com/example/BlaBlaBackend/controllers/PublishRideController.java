@@ -45,5 +45,4 @@ public class PublishRideController {
         List<Ride> rideList = rideService.searchRide(rideDto);
         return new ApiResponse("Ride List Generated Successfully !", rideList, HttpStatus.CREATED);
     }
-
 }
