@@ -1,6 +1,5 @@
 package com.example.BlaBlaBackend.Dto;
 
-import com.example.BlaBlaBackend.customJsonDeserializer.Trim;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 

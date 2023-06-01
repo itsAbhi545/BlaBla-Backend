@@ -1,7 +1,6 @@
 package com.example.BlaBlaBackend.Dto;
 
-import com.example.BlaBlaBackend.customJsonDeserializer.Trim;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.example.BlaBlaBackend.customAnnotation.Trim;
 import lombok.Builder;
 import lombok.Data;
 

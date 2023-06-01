@@ -1,4 +1,4 @@
-package com.example.BlaBlaBackend.customJsonDeserializer;
+package com.example.BlaBlaBackend.customAnnotation;
 
 import com.fasterxml.jackson.annotation.JacksonAnnotationsInside;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;

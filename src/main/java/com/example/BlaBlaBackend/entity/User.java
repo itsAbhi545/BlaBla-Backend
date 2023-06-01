@@ -1,9 +1,8 @@
 package com.example.BlaBlaBackend.entity;
 
-import com.example.BlaBlaBackend.customJsonDeserializer.Trim;
+import com.example.BlaBlaBackend.customAnnotation.Trim;
 import com.example.BlaBlaBackend.util.Regex;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
