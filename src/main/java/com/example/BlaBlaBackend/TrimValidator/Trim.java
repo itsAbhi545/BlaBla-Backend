@@ -1,18 +1,17 @@
 package com.example.BlaBlaBackend.TrimValidator;
 
+import com.fasterxml.jackson.annotation.JacksonAnnotationsInside;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import jakarta.validation.Constraint;
 import jakarta.validation.Payload;
 
 import java.lang.annotation.*;
 
-@Target({ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
-@Documented
-@Constraint(validatedBy = TrimValidator.class)
+@Target(ElementType.FIELD)
+@JacksonAnnotationsInside
+@JsonSerialize(converter = TrimConverter.class)
+@JsonDeserialize(converter = TrimConverter.class)
 public @interface Trim {
-    String[] value();
-
-    String message() default "{Trim.message}";
-    Class<?>[] groups() default {};
-    Class<? extends Payload>[] payload() default {};
 }

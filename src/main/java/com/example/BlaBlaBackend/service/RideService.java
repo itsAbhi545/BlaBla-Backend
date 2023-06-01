@@ -34,7 +34,7 @@ public class RideService {
         return saveRide(ride);
     }
     public List<Ride> searchRide(RideDto rideDto, String minPrice, String maxPrice, Time minTime, Time maxTime, Integer order, String sortBy) {
-        Integer range = 100000;
+        Integer range = 1000000;
         Pageable pageable;
         if(order == 1){
             pageable = PageRequest.of(0, 10, Sort.Direction.ASC, sortBy);

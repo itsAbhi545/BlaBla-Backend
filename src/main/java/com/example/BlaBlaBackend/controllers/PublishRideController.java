@@ -13,6 +13,8 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.introspect.AnnotatedClass;
+import jakarta.persistence.Convert;
+import jakarta.persistence.Converts;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
@@ -49,7 +51,7 @@ public class PublishRideController {
     @Autowired
     UserService userService;
     @PostMapping("ride/publish")
-    public ApiResponse publishRide(@RequestBody @Valid RideDto rideDto, Principal principal) throws JsonProcessingException {
+    public ApiResponse publishRide(@RequestBody RideDto rideDto, Principal principal) throws JsonProcessingException {
 //        Trim trim = AnnotatedClass.class.getAnnotation(Trim.class);
 //        String[] strArr = trim.value();
 //        for(int i = 0; i < strArr.length; i++) {
