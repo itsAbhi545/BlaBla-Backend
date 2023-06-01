@@ -2,21 +2,23 @@ package com.example.BlaBlaBackend.controllers;
 
 import com.example.BlaBlaBackend.Dto.ApiResponse;
 import com.example.BlaBlaBackend.Dto.VehicleDetailsDto;
+import com.example.BlaBlaBackend.Exceptionhandling.ApiException;
+import com.example.BlaBlaBackend.entity.User;
 import com.example.BlaBlaBackend.entity.Vehicle;
 import com.example.BlaBlaBackend.entity.VehicleCompany;
+import com.example.BlaBlaBackend.entity.VehicleDetails;
 import com.example.BlaBlaBackend.service.UserService;
 import com.example.BlaBlaBackend.service.VehicleService;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
 
 @RestController
 @RequestMapping("/admin")
@@ -29,42 +31,23 @@ public class AdminController {
     @Autowired
     ApiResponse apiResponse;
     @PostMapping("/addVehicle")
-    public ApiResponse addVehicle(@RequestBody VehicleDetailsDto vehicleDetailsDto, HttpServletRequest request) {
-
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
-
-        Vehicle vehicle = mapper.convertValue(vehicleDetailsDto, Vehicle.class);
-        VehicleCompany vehicleCompany = new VehicleCompany();
-
+    public ApiResponse addVehicle(@RequestBody VehicleDetailsDto vehicleDetailsDto) {
+        log.info(vehicleDetailsDto.getVehicleCompanyName());
         if (vehicleDetailsDto.getVehicleCompanyName() == null && vehicleDetailsDto.getVehicleCompanyId() == null) {
-            return new ApiResponse("Please Enter Company Name or Id", null, HttpStatus.CREATED);
-        } else {
-            if(vehicleDetailsDto.getVehicleCompanyId() != null) {
-                vehicleCompany = vehicleService.getVehicleCompanyById(vehicleDetailsDto.getVehicleCompanyId());
-            }else {
-                vehicleCompany = vehicleService.getVehicleCompanyByVehicleCompanyName(vehicleDetailsDto.getVehicleCompanyName());
-                if(vehicleCompany == null) {
-                    vehicleCompany = VehicleCompany.builder().vehicleCompanyName(vehicleDetailsDto.getVehicleCompanyName()).build();
-                }
-            }
+            throw new ApiException( HttpStatus.BAD_REQUEST,"Please Enter Company Name or Id");
         }
-        vehicle.setVehicleCompany(vehicleCompany);
-        try{
-        vehicleService.saveVehicle(vehicle);
+        try {
+            vehicleService.saveVehicleByAdmin(vehicleDetailsDto);
+            return new  ApiResponse("Vehicle Created Successfully", null, HttpStatus.CREATED);
         }catch (Exception e) {
-            return new ApiResponse("Vehicle already Exist", null, HttpStatus.BAD_REQUEST);
+            throw new ApiException(HttpStatus.BAD_REQUEST,"Vehicle already Exist");
         }
-        return new  ApiResponse("Vehicle Created Successfully", null, HttpStatus.CREATED);
-
     }
     @PostMapping("/addBrand")
-    public ApiResponse addBrand(HttpServletRequest request) {
-        String brandName = request.getParameter("brandName");
-        if(brandName != null) {
-            VehicleCompany vehicleCompany = VehicleCompany.builder().vehicleCompanyName(brandName).build();
-            return new ApiResponse("Vehicle Brand Added Successfully",
-                    vehicleService.saveVehicleCompany(vehicleCompany), HttpStatus.CREATED);
+    public ApiResponse addBrand(@RequestParam(value = "brandName", required = false, defaultValue = "null") String brandName) {
+        if(brandName == null) {
+            VehicleCompany vehicleCompany = vehicleService.saveVehicleCompanyByAdmin(brandName);
+            return new ApiResponse("Vehicle Brand Added Successfully", vehicleCompany, HttpStatus.CREATED);
         }else {
             return  new ApiResponse("Please Enter Brand Name in Request Parameters", null, HttpStatus.BAD_REQUEST);
         }

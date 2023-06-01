@@ -18,8 +18,9 @@ public class PasswordReset {
     int id;
     @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "userId")
-    private User user;
+    User user;
     String uuid;
-    @Column(columnDefinition = "boolean default false")
-    private Boolean isVerify;
+
+//    @Column(columnDefinition = "boolean default false")
+//    private Boolean isVerify;
 }

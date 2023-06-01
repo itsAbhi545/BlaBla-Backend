@@ -27,8 +27,8 @@ public class UserDto{
     @NotEmpty(message = "DateOfBirth can't be null")
     @Trim
     private  String dob;
-    @Pattern(regexp = Regex.PHONENUMBER)
     @Trim
+    @Pattern(regexp = Regex.PHONENUMBER)
     private String phoneNumber;
 
     public String getFirstName() {

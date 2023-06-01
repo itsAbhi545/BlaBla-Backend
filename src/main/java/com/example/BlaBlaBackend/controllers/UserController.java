@@ -3,6 +3,7 @@ package com.example.BlaBlaBackend.controllers;
 import com.example.BlaBlaBackend.Dto.ApiResponse;
 import com.example.BlaBlaBackend.Dto.PasswordResetDto;
 import com.example.BlaBlaBackend.Dto.UserDto;
+import com.example.BlaBlaBackend.Dto.UserprofileDto;
 import com.example.BlaBlaBackend.Exceptionhandling.ApiException;
 import com.example.BlaBlaBackend.entity.User;
 import com.example.BlaBlaBackend.entity.UserProfile;
@@ -114,5 +115,10 @@ public class UserController {
         return ApiResponse.builder().data(imageUrl)
                 .message("User Avatar Link")
                 .httpStatus(HttpStatus.OK).build();
+    }
+    @PatchMapping("/update/test")
+    public UserprofileDto userprofileDto(@Valid UserprofileDto userProfile){
+        System.out.println(userProfile);
+        return userProfile;
     }
 }

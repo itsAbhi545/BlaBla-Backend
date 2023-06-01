@@ -1,12 +1,9 @@
 package com.example.BlaBlaBackend.entity;
 
-import com.example.BlaBlaBackend.customAnnotation.Trim;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import jakarta.validation.constraints.NotNull;
+import lombok.*;
 
 @Entity
 @Table
@@ -18,12 +15,11 @@ public class VehicleDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Integer id;
-    @Trim
+    @NotNull(message = "NumberPlate Cannot Be Null")
     @Column(columnDefinition = "varchar(100) not null", unique = true)
     String numberPlate;
-    @Trim
     String color;
-    @Trim
+
     String fuelType;
     @ManyToOne(fetch = FetchType.LAZY)
     @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})

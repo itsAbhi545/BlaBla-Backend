@@ -1,44 +1,63 @@
 package com.example.BlaBlaBackend.Dto;
 
 
-import com.example.BlaBlaBackend.customAnnotation.Trim;
+import com.example.BlaBlaBackend.TrimValidator.Trim;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.datatype.jsr310.deser.LocalTimeDeserializer;
+import com.fasterxml.jackson.datatype.jsr310.ser.LocalTimeSerializer;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
 import lombok.*;
+
+import java.time.LocalTime;
 
 @Builder
 @Setter
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
+//@Trim({"source","destination","about_ride"})
+//@({"source","destination","about_ride"})
 public class RideDto {
+
         private int id;
         @Trim
+        @NotEmpty
         private String source;
         @Trim
+        @NotEmpty
         private String destination;
-
         @Trim
+        @NotEmpty
         private String source_latitude;
         @Trim
+        @NotEmpty
         private String source_longitude;
         @Trim
+        @NotEmpty
         private String destination_latitude;
-
         @Trim
+        @NotEmpty
         private String destination_longitude;
-
+        @Min(1)
         private int passengers_count;
-
         @Trim
+        @NotEmpty
         private String add_city;
+
         private Integer vehicle_id;
+        @NotEmpty
         private Integer set_price;
         @Trim
+        @NotEmpty
         private  String about_ride;
 
-        @Trim
         private String date;
-        @Trim
-        private String time;
+        @JsonSerialize(using = LocalTimeSerializer.class)
+        @JsonDeserialize(using = LocalTimeDeserializer.class)
+        private LocalTime time;
         private Select_route selectRoute;
 
         @Override

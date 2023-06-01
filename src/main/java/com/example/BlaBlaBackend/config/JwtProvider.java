@@ -12,7 +12,8 @@ import java.util.Date;
 @Component
 public class JwtProvider {
     private String jwtSecret="sIoVC8OFOgmxbk9XRYtY2zMKXuYXBGL2d3x1IV37";
-    private Long jwtExpiration = 6000000L;
+//    private Long jwtExpiration = 6000000L;
+    private Long jwtExpiration = 600000000000000L;
 
     private Claims parseToken(String token) {
         // Create JwtParser

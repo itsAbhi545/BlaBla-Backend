@@ -9,7 +9,7 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 public class PasswordResetDto {
-    //     "reset_password_token": "CxGAxz3GdCeVJozHmZd8",
+//     "reset_password_token": "CxGAxz3GdCeVJozHmZd8",
 //             "password": "Khushie@32!",
 //             "password_confirmation": "Khushie@32!"
     @NotNull(message = "Reset Password Token Cant be Null")

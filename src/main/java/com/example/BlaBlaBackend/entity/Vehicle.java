@@ -4,6 +4,7 @@ import com.example.BlaBlaBackend.customAnnotation.Trim;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 import java.util.List;
@@ -23,6 +24,7 @@ public class Vehicle {
     @Column(columnDefinition = "varchar(100) not null", unique = true)
     String name;
 
+    @NotNull(message = "Enter Atleast Two seats")
     Integer seats;
 
 
