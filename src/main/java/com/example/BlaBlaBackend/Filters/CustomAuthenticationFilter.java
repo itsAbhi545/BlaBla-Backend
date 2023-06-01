@@ -1,7 +1,7 @@
 package com.example.BlaBlaBackend.Filters;
 
-import com.example.BlaBlaBackend.Dto.ApiResponse;
 import com.example.BlaBlaBackend.Dto.UserDto;
+import com.example.BlaBlaBackend.Exceptionhandling.ApiException;
 import com.example.BlaBlaBackend.config.JwtProvider;
 import com.example.BlaBlaBackend.entity.User;
 import com.example.BlaBlaBackend.entity.UserProfile;
@@ -9,19 +9,18 @@ import com.example.BlaBlaBackend.entity.UserTokens;
 import com.example.BlaBlaBackend.service.UserProfileService;
 import com.example.BlaBlaBackend.service.UserService;
 import com.example.BlaBlaBackend.service.UserTokensService;
+import com.example.BlaBlaBackend.util.Regex;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.BeanUtils;
-//import org.apache.commons.beanutils.BeanUtils;
-import org.springframework.http.MediaType;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import java.io.IOException;
@@ -51,6 +50,9 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
         String email = request.getParameter("email");
         String password = request.getParameter("password");
+
+        if(!Regex.matchEmail(email) || !Regex.matchPassword(password))
+            throw new ApiException(HttpStatus.valueOf(400),"Please Enter valid Credentials!!");
         //System.out.println(email);
         UsernamePasswordAuthenticationToken authenticationToken =
                 new UsernamePasswordAuthenticationToken(email,password);
