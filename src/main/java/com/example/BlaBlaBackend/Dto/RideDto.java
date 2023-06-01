@@ -2,10 +2,12 @@ package com.example.BlaBlaBackend.Dto;
 
 
 import com.example.BlaBlaBackend.TrimValidator.Trim;
+import com.example.BlaBlaBackend.TrimValidator.TrimConverter;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalTimeDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalTimeSerializer;
+import jakarta.persistence.Convert;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
@@ -18,13 +20,15 @@ import java.time.LocalTime;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-//@Trim({"source","destination","about_ride"})
+
 //@({"source","destination","about_ride"})
+
 public class RideDto {
 
         private int id;
-        @Trim
+
         @NotEmpty
+       @Trim
         private String source;
         @Trim
         @NotEmpty
@@ -54,6 +58,7 @@ public class RideDto {
         @NotEmpty
         private  String about_ride;
 
+        @Trim
         private String date;
         @JsonSerialize(using = LocalTimeSerializer.class)
         @JsonDeserialize(using = LocalTimeDeserializer.class)

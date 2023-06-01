@@ -8,6 +8,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.UUID;
 
 @Service
@@ -17,9 +19,8 @@ public class PasswordService {
     PasswordResetRepo passwordResetRepo;
 
     public PasswordReset addUuidByEmail(User user){
-
-        String uuid = UUID.randomUUID().toString();
         PasswordReset passwordReset = passwordResetRepo.getPasswordResetByUser(user);
+        String uuid = UUID.randomUUID().toString();
         if(passwordReset == null) {
          passwordReset = PasswordReset.builder()
                     .uuid(uuid)
@@ -37,10 +38,10 @@ public class PasswordService {
         return passwordResetRepo.getPasswordResetByUuid(token);
 
     }
-    public void deleteTokenByUser(User user) {
+    public void deleteTokenById(Integer id) {
         log.info("\u001B[41m" + "im here"+ "\u001B[0m");
 
-        passwordResetRepo.deletePasswordResetByUser(user);
+        passwordResetRepo.deleteById(id);
     }
     public PasswordReset savePasswordReset(PasswordReset passwordReset){
         return passwordResetRepo.save(passwordReset);

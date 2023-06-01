@@ -25,6 +25,8 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.UUID;
@@ -77,24 +79,7 @@ public class UserService implements UserDetailsService{
         String userImageUrl = userProfileService.findUserProfileByUserId(Integer.parseInt(uid)).getUserImageUrl();
         return (userImageUrl!=null)?userImageUrl:"/images/c6c0b9b2-5162-4c01-9d57-e7921839ed19.jpg";
     }
-    public void forgetPasswordUtil(String email) throws MessagingException {
-        String url = currentDomain + "/users/password/edit?token=";
-        User user = findUserByEmail(email);
-        if(user == null){
-            throw new ApiException(HttpStatus.BAD_REQUEST, "User Not Exist!");
-        }
-        //Added Random uuid
-        PasswordReset passwordReset = passwordService.addUuidByEmail(user);
 
-        String token = passwordReset.getUuid();
-        url += token;
-
-        String message = String.format( """
-                <p>Click Below To Reset Your Password</p>
-                <a href=%s style="display: inline-block; text-decoration: none; background: #10A37F; border-radius: 3px; color: white; font-family: Helvetica, sans-serif; font-size: 16px; line-height: 24px; font-weight: 400; padding: 12px 20px 11px; margin: 0px" target="_blank" rel="noreferrer">Verify Your Email</a>   
-                """,url);
-        emailService.sendPasswordResetLink(email, "Reset Your Password",  message);
-    }
     public void uploadUserImage(MultipartFile file, String token) throws IOException {
         String folder = "/springBoot projects/BlaBla-Backend/src/main/java/images/";
         //String folder = "/images/";
@@ -153,6 +138,24 @@ public class UserService implements UserDetailsService{
         userDto.setEmail(email);
         return  userDto;
     }
+    public void forgetPasswordUtil(String email) throws MessagingException {
+        String url = currentDomain + "/users/password/edit?token=";
+        User user = findUserByEmail(email);
+        if(user == null){
+            throw new ApiException(HttpStatus.BAD_REQUEST, "User Not Exist!");
+        }
+        //Added Random uuid
+        PasswordReset passwordReset = passwordService.addUuidByEmail(user);
+
+        String token = passwordReset.getUuid();
+        url += token;
+
+        String message = String.format( """
+                <p>Click Below To Reset Your Password</p>
+                <a href=%s style="display: inline-block; text-decoration: none; background: #10A37F; border-radius: 3px; color: white; font-family: Helvetica, sans-serif; font-size: 16px; line-height: 24px; font-weight: 400; padding: 12px 20px 11px; margin: 0px" target="_blank" rel="noreferrer">Verify Your Email</a>   
+                """,url);
+        emailService.sendPasswordResetLink(email, "Reset Your Password",  message);
+    }
     public void resetPassword(PasswordResetDto passwordResetDto){
         String newPassword = passwordResetDto.getPassword();
         String cnfPassword = passwordResetDto.getPassword_confirmation();
@@ -163,12 +166,15 @@ public class UserService implements UserDetailsService{
             throw new ApiException(HttpStatus.valueOf(400),"Please Verify Your Email To Continue");
         if(!newPassword.equals(cnfPassword))
             throw new ApiException(HttpStatus.BAD_REQUEST,"Password does Not Matched");
-
+        if((passwordReset.getLastUpdated().until(LocalDateTime.now(), ChronoUnit.MINUTES)) > 5){
+            passwordService.deleteTokenById(passwordReset.getId());
+            throw new ApiException(HttpStatus.BAD_REQUEST, "Token Expire At" + passwordReset.getLastUpdated().plusMinutes(5l));
+        }
         User user = passwordReset.getUser();
         user.setPassword(newPassword);
         userRepo.save(user);
 //       delete token
-        passwordService.deleteTokenByUser(passwordReset.getUser());
+        passwordService.deleteTokenById(passwordReset.getId());
     }
     public UserDto verifyUserAccount(String token){
         ConfirmationToken confirmationToken = (token==null)?null:confirmationTokenService.findConfirmationTokenByUserVerifyToken(token);

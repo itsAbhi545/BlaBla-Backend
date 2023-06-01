@@ -1,5 +1,6 @@
 package com.example.BlaBlaBackend.Dto;
 
+import com.example.BlaBlaBackend.TrimValidator.Trim;
 import com.example.BlaBlaBackend.util.Regex;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import jakarta.validation.constraints.NotNull;
@@ -7,6 +8,7 @@ import jakarta.validation.constraints.Pattern;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class UserDto {
     @NotNull(message = "FirstName can't be null")
+    @Trim
     private String firstName;
     @NotNull(message = "LastName can't be null")
     private String lastName;

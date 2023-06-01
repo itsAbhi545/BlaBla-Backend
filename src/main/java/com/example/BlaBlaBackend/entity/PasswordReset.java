@@ -5,6 +5,9 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.UpdateTimestamp;
+
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "UserPasswordReset")
@@ -20,6 +23,9 @@ public class PasswordReset {
     @JoinColumn(name = "userId")
     User user;
     String uuid;
+
+    @UpdateTimestamp
+    private LocalDateTime lastUpdated;
 
 //    @Column(columnDefinition = "boolean default false")
 //    private Boolean isVerify;

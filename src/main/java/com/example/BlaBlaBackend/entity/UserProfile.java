@@ -1,5 +1,6 @@
 package com.example.BlaBlaBackend.entity;
 
+import com.example.BlaBlaBackend.TrimValidator.Trim;
 import com.example.BlaBlaBackend.util.Regex;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
@@ -15,13 +16,18 @@ public class UserProfile {
     @JoinColumn(name = "user")
     private User user;
     @NotNull(message = "FirstName can't be null")
+    @Trim
     private String firstName;
     @NotNull(message = "LastName can't be null")
+    @Trim
     private String lastName;
+    @Trim
     private String userImageUrl;
+    @Trim
     @NotNull(message = "D.O.B can't be null")
     private String dob;
     @Pattern(regexp = Regex.PHONENUMBER,message = "Enter valid Phone-Number")
+    @Trim
     private String phoneNumber;
     private String gender = "MALE";
 

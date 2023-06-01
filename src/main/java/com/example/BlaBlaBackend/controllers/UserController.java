@@ -59,24 +59,9 @@ public class UserController {
     }
     //route for updating the user profile
     @PatchMapping("/update/user")
-    public ApiResponse updateUser(@Valid UserProfile userProfile,@RequestHeader String Authorization,Principal principal){
+    public ApiResponse updateUser(UserProfile userProfile,@RequestHeader String Authorization,Principal principal){
         UserDto userDto =  userService.updateUser(userProfile,Authorization.substring(7),principal.getName());
-//        if(userProfile.getPhoneNumber()==null)
-//            throw new ApiException(HttpStatus.valueOf(400),"Please Enter Phone-Number");
-//        apiResponse.setMessage("User Updated Successfully!!");
-//        apiResponse.setHttpStatus(HttpStatus.valueOf(202));
-//        String token = request.getHeader("Authorization").substring(7);
-//        String uid = jwtProvider.getUsernameFromToken(token);
-//       // user.setEmail(principal.getName());
-//       // userService.updateUserProfile(user);
-//        userProfileService.updateUserProfile(userProfile,Integer.parseInt(uid));
-//        log.info("User Updated Successfully!!!");
-//        UserDto userDto = new UserDto();
-//        BeanUtils.copyProperties(userProfile,userDto);
-//        userDto.setPhoneNumber(userProfile.getPhoneNumber());
-//        userDto.setEmail(principal.getName());
-//        apiResponse.setData(userDto);
-//        String email = userProfile.getUser().getEmail();
+
         return  ApiResponse.builder().message("User Updated Successfully!!")
                 .httpStatus(HttpStatus.valueOf(202)).data(userDto)
                 .build();
@@ -93,33 +78,6 @@ public class UserController {
     @PostMapping("/resetPassword")
     public ApiResponse resetPassword(@Valid @RequestBody PasswordResetDto passwordResetDto) {
         userService.resetPassword(passwordResetDto);
-//        String newPassword = passwordResetDto.getPassword();
-//        String cnfPassword = passwordResetDto.getPassword_confirmation();
-////        if(newPassword == null || cnfPassword == null) {
-////            apiResponse.setMessage("Please Enter The Password");
-////            return apiResponse;
-////        }
-//        String token = passwordResetDto.getReset_password_token();
-//        PasswordReset passwordReset = passwordService.getByToken(token);
-//        if(passwordReset != null) {
-//            if (newPassword.equals(cnfPassword)) {
-//                User user = userService.findUserByEmail(passwordReset.getEmail());
-//                user.setPassword(newPassword);
-//                userService.saveUser(user);
-////            delete token
-//                passwordService.deleteTokenByEmail(passwordReset.getEmail());
-//                apiResponse.setMessage("Password Reset Successfully");
-//                apiResponse.setHttpStatus(HttpStatus.ACCEPTED);
-//                return apiResponse;
-//            } else {
-//                apiResponse.setMessage("Password does Not Matched");
-//                return apiResponse;
-//            }
-//        }
-//        else {
-//            apiResponse.setMessage("Please Verify Your Email To Continue");
-//            return apiResponse;
-//        }
         return ApiResponse.builder().httpStatus(HttpStatus.ACCEPTED).message("Password Reset Successfully").build();
     }
 
