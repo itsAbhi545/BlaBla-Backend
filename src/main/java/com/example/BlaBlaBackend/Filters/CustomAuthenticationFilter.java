@@ -2,6 +2,7 @@ package com.example.BlaBlaBackend.Filters;
 
 import com.example.BlaBlaBackend.Dto.ApiResponse;
 import com.example.BlaBlaBackend.Dto.UserDto;
+import com.example.BlaBlaBackend.Exceptionhandling.ApiException;
 import com.example.BlaBlaBackend.config.JwtProvider;
 import com.example.BlaBlaBackend.entity.User;
 import com.example.BlaBlaBackend.entity.UserProfile;
@@ -9,6 +10,7 @@ import com.example.BlaBlaBackend.entity.UserTokens;
 import com.example.BlaBlaBackend.service.UserProfileService;
 import com.example.BlaBlaBackend.service.UserService;
 import com.example.BlaBlaBackend.service.UserTokensService;
+import com.example.BlaBlaBackend.util.Regex;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -16,6 +18,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.BeanUtils;
 //import org.apache.commons.beanutils.BeanUtils;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -53,6 +56,9 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
         String email = request.getParameter("email");
         String password = request.getParameter("password");
         //System.out.println(email);
+        if(!Regex.matchEmail(email) || !Regex.matchPassword(password))
+            throw new ApiException(HttpStatus.valueOf(400),"Please Enter valid Credentials!!");
+
         UsernamePasswordAuthenticationToken authenticationToken =
                 new UsernamePasswordAuthenticationToken(email,password);
         return authenticationManager.authenticate(authenticationToken);

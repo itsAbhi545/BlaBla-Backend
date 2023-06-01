@@ -26,7 +26,6 @@ public class RideDto {
         @Trim
         private String destination_longitude;
 
-        @Trim
         private int passengers_count;
 
         @Trim
