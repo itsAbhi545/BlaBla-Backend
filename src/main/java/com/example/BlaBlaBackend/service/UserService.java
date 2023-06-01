@@ -164,15 +164,16 @@ public class UserService implements UserDetailsService{
     public UserDto verifyUserAccount(String token){
         ConfirmationToken confirmationToken = (token==null)?null:confirmationTokenService.findConfirmationTokenByUserVerifyToken(token);
         if(confirmationToken==null) throw new ApiException(HttpStatus.BAD_REQUEST,"Enter Valid Token");
-
+        if(Helper.tokenExpires(confirmationToken.getLastUpdated()))
+            throw new ApiException(HttpStatus.BAD_REQUEST,"Token Expires!!!");
         //verifying the user
         User user = confirmationToken.getUserId();
         user.setVerified(true);
         //updating the user
         userRepo.save(user);
 
-        confirmationToken.setUserVerifyToken(null);
-        confirmationTokenService.saveConfirmationToken(confirmationToken);
+        //deleting the confirmation token!!!!
+        confirmationTokenService.deleteConfirmationTokenByCid(confirmationToken.getCid());
 
         //creating a new user token!!
         UserTokens userTokens = new UserTokens();
