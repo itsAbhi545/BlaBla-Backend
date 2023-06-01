@@ -42,6 +42,9 @@ public class PasswordService {
 
         passwordResetRepo.deletePasswordResetByUser(user);
     }
+    public void deleteTokenById(int id){
+        passwordResetRepo.deleteById(id);
+    }
     public PasswordReset savePasswordReset(PasswordReset passwordReset){
         return passwordResetRepo.save(passwordReset);
     }

@@ -153,13 +153,17 @@ public class UserService implements UserDetailsService{
             throw new ApiException(HttpStatus.valueOf(400),"Please Verify Your Email To Continue");
         if(!newPassword.equals(cnfPassword))
             throw new ApiException(HttpStatus.BAD_REQUEST,"Password does Not Matched");
+        if(Helper.tokenExpires(passwordReset.getLastUpdated())) {
+            passwordService.deleteTokenById(passwordReset.getId());
+            throw new ApiException(HttpStatus.BAD_REQUEST, "Token Expires!!!");
+        }
 
         //User user = userRepo.findUserByEmail(passwordReset.getUser().getEmail());
         User user = passwordReset.getUser();
         user.setPassword(newPassword);
         userRepo.save(user);
 //       delete token
-        passwordService.deleteTokenByUser(user);
+        passwordService.deleteTokenById(passwordReset.getId());
     }
     public UserDto verifyUserAccount(String token){
         ConfirmationToken confirmationToken = (token==null)?null:confirmationTokenService.findConfirmationTokenByUserVerifyToken(token);
