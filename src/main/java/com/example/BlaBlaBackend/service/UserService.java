@@ -1,6 +1,5 @@
 package com.example.BlaBlaBackend.service;
 
-import com.example.BlaBlaBackend.Dto.ApiResponse;
 import com.example.BlaBlaBackend.Dto.PasswordResetDto;
 import com.example.BlaBlaBackend.Dto.UserDto;
 import com.example.BlaBlaBackend.Exceptionhandling.ApiException;
@@ -9,7 +8,6 @@ import com.example.BlaBlaBackend.entity.*;
 import com.example.BlaBlaBackend.repo.UserRepo;
 import com.example.BlaBlaBackend.util.Helper;
 import jakarta.mail.MessagingException;
-import jakarta.mail.Multipart;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Value;
@@ -71,6 +69,7 @@ public class UserService implements UserDetailsService{
         Collection<SimpleGrantedAuthority> authorites=new ArrayList<>();
         return new org.springframework.security.core.userdetails.User(user.getEmail(), user.riderPassword(), authorites);
     }
+
     //method for getting user image url
     public String getUserImage_Url(String token){
         String uid = jwtProvider.getUsernameFromToken(token);
