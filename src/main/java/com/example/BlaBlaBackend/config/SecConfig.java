@@ -77,11 +77,8 @@ public class SecConfig {
         http.authorizeHttpRequests().requestMatchers("/api/forgetPassword","/api/resetPassword").permitAll();
 
         http.authorizeHttpRequests().anyRequest().authenticated();
-//        .and().formLogin()
-//                .failureHandler(authenticationFailureHandler());
         http.addFilter(filter);
-        //http.exceptionHandling().AuthenticationFailureHandler(AuthenticationFailureHandler);
-//        http.exceptionHandling()
+
         http.exceptionHandling().authenticationEntryPoint(new CustomAuthenticationEntryPoint());
         http.addFilterBefore(new CustomAuthorizationFilter(userTokensService,jwtProvider), UsernamePasswordAuthenticationFilter.class);
         
@@ -92,10 +89,7 @@ public class SecConfig {
     public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
         return authenticationConfiguration.getAuthenticationManager();
     }
-    @Bean
-    public ApiResponse createApiResponse(){
-        return new ApiResponse();
-    }
+
 
     @Bean
     CorsConfigurationSource corsConfigurationSource() {

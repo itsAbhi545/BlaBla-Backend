@@ -28,8 +28,7 @@ public class AdminController {
     UserService userService;
     @Autowired
     VehicleService vehicleService;
-    @Autowired
-    ApiResponse apiResponse;
+
     @PostMapping("/addVehicle")
     public ApiResponse addVehicle(@RequestBody VehicleDetailsDto vehicleDetailsDto) {
         log.info(vehicleDetailsDto.getVehicleCompanyName());

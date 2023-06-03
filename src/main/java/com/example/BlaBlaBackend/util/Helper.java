@@ -21,10 +21,10 @@ public class Helper {
         return imageUrl.substring(8,idx);
     }
     public static RideDto findLatLogByName(RideDto rideDto) throws JsonProcessingException {
-        System.out.println("\u001B[44m" + "control here "+ rideDto.getSource_latitude() + "\u001B[0m");
+        System.out.println("\u001B[35m" + "control here "+ rideDto.getSource_latitude() + "\u001B[0m");
         if(rideDto.getSource_latitude() != null && !rideDto.getSource_latitude().equals(""))
             return rideDto;
-        System.out.println("\u001B[44m" + "control here "+ rideDto.getSource_latitude() + "\u001B[0m");
+        System.out.println("\u001B[35m" + "control here "+ rideDto.getSource_latitude() + "\u001B[0m");
         if(rideDto.getAbout_ride() == "") {
             rideDto.setAbout_ride(String.format("Heading from %s to %s . Looking for companions.",rideDto.getSource(),rideDto.getDestination() ));
         }

@@ -14,6 +14,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 
@@ -26,13 +27,14 @@ import java.time.LocalTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @JsonIgnoreProperties({"handler", "hibernateLazyInitializer"})
-
-public class Ride {
+public class Ride  {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    @NotEmpty(message = "Source Cannot Be Null")
+//    @NotEmpty(message = "Source Cannot Be Null")
+
+
     private String source;
     @NotBlank(message = "Destination Cannot Be Null")
     private String destination;
@@ -47,15 +49,17 @@ public class Ride {
     private int passengers_count;
     private String add_city;
     private Integer set_price;
+
     @NotBlank(message = "Enter a Valid Date")
     private String date;
+
     @JsonSerialize(using = LocalTimeSerializer.class)
     @JsonDeserialize(using = LocalTimeDeserializer.class)
     private LocalTime time;
+
     private  String about_ride;
 
     private int seatBooked;
-
     @OneToOne
     @JoinColumn(name ="vehicle_id")
     private Vehicle vehicle;

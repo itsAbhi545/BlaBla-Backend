@@ -14,6 +14,8 @@ import org.springframework.stereotype.Service;
 
 import java.security.Principal;
 import java.sql.Time;
+import java.time.LocalTime;
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -44,6 +46,10 @@ public class RideService {
         }
 
         return rideRepo.findAllRidesNearLocation(pageable, rideDto, range, minPrice, maxPrice, minTime, maxTime).getContent();
+    }
+    public List<Ride> findByVehicleAndDateAndTime(Vehicle vehicle, String date, LocalTime time){
+
+        return rideRepo.findByVehicleAndDateAndTime(vehicle,date,time);
     }
 
 }

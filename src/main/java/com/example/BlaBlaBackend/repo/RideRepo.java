@@ -2,6 +2,7 @@ package com.example.BlaBlaBackend.repo;
 
 import com.example.BlaBlaBackend.Dto.RideDto;
 import com.example.BlaBlaBackend.entity.Ride;
+import com.example.BlaBlaBackend.entity.Vehicle;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -10,11 +11,13 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.sql.Time;
+import java.time.LocalTime;
 import java.util.List;
 
 @Repository
 public interface RideRepo extends JpaRepository<Ride, Integer> {
     List<Ride> findRideBySourceAndDestination(String source, String Destination);
+    List<Ride> findByVehicleAndDateAndTime(Vehicle vehicle, String Date, LocalTime time);
 
     @Query(
 value = "select * From ride r " +
