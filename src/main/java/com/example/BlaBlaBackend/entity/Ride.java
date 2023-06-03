@@ -1,23 +1,15 @@
 package com.example.BlaBlaBackend.entity;
 
 
+import com.example.BlaBlaBackend.customAnnotation.Trim;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.fasterxml.jackson.datatype.jsr310.deser.LocalTimeDeserializer;
-import com.fasterxml.jackson.datatype.jsr310.ser.LocalTimeSerializer;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 
-import java.io.Serializable;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
-
 
 @Entity
 @Table
@@ -27,45 +19,36 @@ import java.time.LocalTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @JsonIgnoreProperties({"handler", "hibernateLazyInitializer"})
-public class Ride  {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+public class Ride {
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-
-//    @NotEmpty(message = "Source Cannot Be Null")
-
-
+    @NotNull @Trim
     private String source;
-    @NotBlank(message = "Destination Cannot Be Null")
+    @NotNull @Trim
     private String destination;
-
+    @JsonIgnore @Trim
     private String source_latitude;
+    @JsonIgnore @Trim
     private String source_longitude;
+    @JsonIgnore @Trim
     private String destination_latitude;
-
+    @JsonIgnore @Trim
     private String destination_longitude;
-    @Min(1)
-    @NotNull(message = "Choose At-least One Passenger")
+
     private int passengers_count;
+    @Trim
     private String add_city;
     private Integer set_price;
-
-    @NotBlank(message = "Enter a Valid Date")
-    private String date;
-
-    @JsonSerialize(using = LocalTimeSerializer.class)
-    @JsonDeserialize(using = LocalTimeDeserializer.class)
-    private LocalTime time;
-
+    @Trim
     private  String about_ride;
+    private int seatBooked=0;
 
-    private int seatBooked;
     @OneToOne
     @JoinColumn(name ="vehicle_id")
     private Vehicle vehicle;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+    @JsonIgnoreProperties({"handler", "hibernateLazyInitializer"})
     @JoinColumn(name = "userid")
     private User user;
     @CreationTimestamp

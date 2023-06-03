@@ -25,8 +25,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.UUID;
@@ -87,7 +85,7 @@ public class UserService implements UserDetailsService{
         String uid = jwtProvider.getUsernameFromToken(token);
         String img_url = userProfileService.findUserProfileByUserId(Integer.parseInt(uid)).getUserImageUrl();
         String randomId = (img_url==null)? UUID.randomUUID().toString(): Helper.extractUUid(img_url);
-        // System.out.println(uid+"///");
+
         //finding the extension of file!!!
         String fileExtension = Helper.findExtension(file.getOriginalFilename());
         // Path path = Paths.get(folder + file.getOriginalFilename());
@@ -96,22 +94,14 @@ public class UserService implements UserDetailsService{
 
         userProfileService.updateUserImage("/images/"+randomId+fileExtension,Integer.parseInt(uid));
         Files.write(path,bytes);
-//        apiResponse.setMessage("Image Uploaded Successfully!!");
-//        apiResponse.setHttpStatus(HttpStatus.valueOf(201));
-//        return apiResponse;
     }
     public User createUser(UserDto userDto){
         //User user1  = objectMapper.convertValue(userDto,User.class);
+
         User user = new User();
         UserProfile userProfile = new UserProfile();
         BeanUtils.copyProperties(userDto,user);
         BeanUtils.copyProperties(userDto,userProfile);
-        //UserProfile userProfile = objectMapper.convertValue(userDto,UserProfile.class);
-
-//        apiResponse.setMessage("User Created Successfully!!");
-//        apiResponse.setData(user1);
-//        apiResponse.setHttpStatus(HttpStatus.OK);
-
         //saving the user!!!
         User currentUser = this.saveUser(user);
         userProfile.setUser(currentUser);
@@ -122,7 +112,6 @@ public class UserService implements UserDetailsService{
         //saving the user confirmation Token
         UUID uuid = UUID.randomUUID();
         ConfirmationToken confirmationToken = new ConfirmationToken(uuid.toString(),currentUser);
-        //ConfirmationToken confirmationToken = new ConfirmationToken(uuid.toString(),user1);
         confirmationTokenService.saveConfirmationToken(confirmationToken);
         return currentUser;
     }
@@ -166,10 +155,12 @@ public class UserService implements UserDetailsService{
             throw new ApiException(HttpStatus.valueOf(400),"Please Verify Your Email To Continue");
         if(!newPassword.equals(cnfPassword))
             throw new ApiException(HttpStatus.BAD_REQUEST,"Password does Not Matched");
-        if((passwordReset.getLastUpdated().until(LocalDateTime.now(), ChronoUnit.MINUTES)) > 5){
+        if(Helper.tokenExpires(passwordReset.getLastUpdated())) {
             passwordService.deleteTokenById(passwordReset.getId());
-            throw new ApiException(HttpStatus.BAD_REQUEST, "Token Expire At" + passwordReset.getLastUpdated().plusMinutes(5l));
+            throw new ApiException(HttpStatus.BAD_REQUEST, "Token Expires!!!");
         }
+
+        //User user = userRepo.findUserByEmail(passwordReset.getUser().getEmail());
         User user = passwordReset.getUser();
         user.setPassword(newPassword);
         userRepo.save(user);
@@ -179,15 +170,16 @@ public class UserService implements UserDetailsService{
     public UserDto verifyUserAccount(String token){
         ConfirmationToken confirmationToken = (token==null)?null:confirmationTokenService.findConfirmationTokenByUserVerifyToken(token);
         if(confirmationToken==null) throw new ApiException(HttpStatus.BAD_REQUEST,"Enter Valid Token");
-
+        if(Helper.tokenExpires(confirmationToken.getLastUpdated()))
+            throw new ApiException(HttpStatus.BAD_REQUEST,"Token Expires!!!");
         //verifying the user
         User user = confirmationToken.getUserId();
         user.setVerified(true);
         //updating the user
         userRepo.save(user);
 
-        confirmationToken.setUserVerifyToken(null);
-        confirmationTokenService.saveConfirmationToken(confirmationToken);
+        //deleting the confirmation token!!!!
+        confirmationTokenService.deleteConfirmationTokenByCid(confirmationToken.getCid());
 
         //creating a new user token!!
         UserTokens userTokens = new UserTokens();

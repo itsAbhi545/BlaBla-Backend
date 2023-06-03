@@ -23,6 +23,8 @@ public class PasswordReset {
     @JoinColumn(name = "userId")
     User user;
     String uuid;
+    @UpdateTimestamp
+    private LocalDateTime lastUpdated;
 
     @UpdateTimestamp
     private LocalDateTime lastUpdated;

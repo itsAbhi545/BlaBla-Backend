@@ -1,9 +1,12 @@
 package com.example.BlaBlaBackend.entity;
 
+import com.example.BlaBlaBackend.customAnnotation.Trim;
 import com.example.BlaBlaBackend.util.Regex;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -11,22 +14,21 @@ import java.time.LocalDateTime;
 
 @Entity
 @Table(name="user")
+@NoArgsConstructor
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
     @NotNull(message = "Email can't be null")
     @Pattern(regexp = Regex.EMAIL,message = "Enter valid email")
+    @Trim
     @Column(unique = true)
     private String email;
-
     @NotNull(message = "Password can't be null")
     @Pattern(regexp = Regex.PASSWORD,message = "Enter valid Password")
-
+    @Trim
+    @JsonIgnore
     private String password;
-
-
-
     @CreationTimestamp
     private LocalDateTime dateCreated; //epoctime
     @UpdateTimestamp
@@ -34,15 +36,12 @@ public class User {
     @Column(columnDefinition = "boolean default false")
     private boolean isVerified;
 
-//    @OneToOne(mappedBy = "user",cascade = {CascadeType.ALL},fetch=FetchType.LAZY)
-//    private UserProfile profile;
     @OneToOne(mappedBy="user",cascade = CascadeType.PERSIST,orphanRemoval = true)
     private UserProfile profile;
 
     public int grabCurrentUserId() {
         return id;
     }
-
 
     public void setVerified(boolean verified) {
         isVerified = verified;
@@ -70,16 +69,4 @@ public class User {
         this.id = id;
     }
 
-
-    @Override
-    public String toString() {
-        return "User{" +
-                ", email='" + email + '\'' +
-                ", password='" + password + '\'' +
-                ", dateCreated=" + dateCreated +
-                ", lastUpdated=" + lastUpdated +
-                ", isVerified=" + isVerified +
-                ", profile=" + profile.getFirstName() +
-                '}';
-    }
 }

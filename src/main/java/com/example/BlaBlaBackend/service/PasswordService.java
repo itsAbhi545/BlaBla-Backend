@@ -22,7 +22,7 @@ public class PasswordService {
         PasswordReset passwordReset = passwordResetRepo.getPasswordResetByUser(user);
         String uuid = UUID.randomUUID().toString();
         if(passwordReset == null) {
-         passwordReset = PasswordReset.builder()
+            passwordReset = PasswordReset.builder()
                     .uuid(uuid)
                     .user(user)
                     .build();
@@ -41,6 +41,9 @@ public class PasswordService {
     public void deleteTokenById(Integer id) {
         log.info("\u001B[41m" + "im here"+ "\u001B[0m");
 
+        passwordResetRepo.deleteById(id);
+    }
+    public void deleteTokenById(int id){
         passwordResetRepo.deleteById(id);
     }
     public PasswordReset savePasswordReset(PasswordReset passwordReset){

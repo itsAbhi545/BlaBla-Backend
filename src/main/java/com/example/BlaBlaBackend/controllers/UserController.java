@@ -3,12 +3,12 @@ package com.example.BlaBlaBackend.controllers;
 import com.example.BlaBlaBackend.Dto.ApiResponse;
 import com.example.BlaBlaBackend.Dto.PasswordResetDto;
 import com.example.BlaBlaBackend.Dto.UserDto;
+import com.example.BlaBlaBackend.Dto.UserprofileDto;
 import com.example.BlaBlaBackend.Exceptionhandling.ApiException;
-import com.example.BlaBlaBackend.config.JwtProvider;
 import com.example.BlaBlaBackend.entity.User;
 import com.example.BlaBlaBackend.entity.UserProfile;
-import com.example.BlaBlaBackend.service.*;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.example.BlaBlaBackend.service.UserService;
+import com.example.BlaBlaBackend.service.UserTokensService;
 import jakarta.mail.MessagingException;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
@@ -37,8 +37,9 @@ public class UserController {
     public ApiResponse createUser(@RequestBody @Valid UserDto userDto){
         User user = userService.createUser(userDto);
         return ApiResponse.builder().message("User Created Successfully!!")
-                .data(user).httpStatus(HttpStatus.CREATED).build();
+                 .data(user).httpStatus(HttpStatus.CREATED).build();
     }
+
     //route for deleting the user
     @PostMapping("/logout")
     @ResponseStatus(HttpStatus.ACCEPTED)
@@ -57,11 +58,11 @@ public class UserController {
         return ApiResponse.builder().message("User doesn't exist!!!")
                 .httpStatus(HttpStatus.OK).build();
     }
+
     //route for updating the user profile
     @PatchMapping("/update/user")
-    public ApiResponse updateUser(UserProfile userProfile,@RequestHeader String Authorization,Principal principal){
-        UserDto userDto =  userService.updateUser(userProfile,Authorization.substring(7),principal.getName());
-
+    public ApiResponse updateUser(@Valid UserProfile userProfile,@RequestHeader String Authorization,Principal principal){
+       UserDto userDto =  userService.updateUser(userProfile,Authorization.substring(7),principal.getName());
         return  ApiResponse.builder().message("User Updated Successfully!!")
                 .httpStatus(HttpStatus.valueOf(202)).data(userDto)
                 .build();
@@ -85,30 +86,6 @@ public class UserController {
     @PostMapping("/verify-user/email/{token}")
     public ApiResponse verifyUserAccount(@PathVariable String token){
         UserDto userDto = userService.verifyUserAccount(token);
-//        ConfirmationToken confirmationToken = (token==null)?null:confirmationTokenService.findConfirmationTokenByUserVerifyToken(token);
-//        if(confirmationToken==null) throw new ApiException(HttpStatus.BAD_REQUEST,"Enter Valid Token");
-//
-//        //verifying the user
-//        User user = confirmationToken.getUserId();
-//        user.setVerified(true);
-//        //updating the user
-//        userService.saveUser(user);
-//
-//        confirmationToken.setUserVerifyToken(null);
-//        confirmationTokenService.saveConfirmationToken(confirmationToken);
-//       //creating a new user token!!
-//        UserTokens userTokens = new UserTokens();
-//        userTokens.setUserId(user);
-//        //saving the user token
-//        userTokens.setToken(jwtProvider.generateToken(Integer.toString(user.grabCurrentUserId())));
-//        userTokensService.saveUserToken(userTokens);
-//        //grab the current user-Profile
-//        UserProfile userProfile = userProfileService.findUserProfileByUserId(user.grabCurrentUserId());
-//        UserDto userDto = new UserDto();
-//
-//        //copying the user details in its dto
-//        BeanUtils.copyProperties(userProfile,userDto);
-//        userDto.setEmail(user.getEmail());
         return ApiResponse.builder().httpStatus(HttpStatus.OK).message("User verified Successfully!!").data(userDto).build();
     }
 
@@ -116,23 +93,6 @@ public class UserController {
     @PostMapping("/upload/user-image")
     public ApiResponse uploadImage(@RequestParam("image") MultipartFile file,@RequestHeader String Authorization) throws IOException {
         userService.uploadUserImage(file,Authorization.substring(7));
-        // String folder = "/springBoot projects/BlaBla-Backend/src/main/java/images/";
-//      {
-// String folder = "/images/";
-//        byte[] bytes = file.getBytes();
-//        String token = request.getHeader("Authorization").substring(7);
-//        String uid = jwtProvider.getUsernameFromToken(token);
-//        String img_url = userProfileService.findUserProfileByUserId(Integer.parseInt(uid)).getUserImageUrl();
-//        String randomId = (img_url==null)?UUID.randomUUID().toString():Helper.extractUUid(img_url);
-//       // System.out.println(uid+"///");
-//        //finding the extension of file!!!
-//        String fileExtension = Helper.findExtension(file.getOriginalFilename());
-//        // Path path = Paths.get(folder + file.getOriginalFilename());
-//        String url = folder + randomId + fileExtension;
-//        Path path = Paths.get(url);
-//
-//        userProfileService.updateUserImage("/images/"+randomId+fileExtension,Integer.parseInt(uid));
-//        Files.write(path,bytes);
         return ApiResponse.builder().message("Image Uploaded Successfully!!")
                 .httpStatus(HttpStatus.valueOf(201)).build();
     }
@@ -154,5 +114,10 @@ public class UserController {
         return ApiResponse.builder().data(imageUrl)
                 .message("User Avatar Link")
                 .httpStatus(HttpStatus.OK).build();
+    }
+    @PatchMapping("/update/test")
+    public UserprofileDto userprofileDto(@Valid UserprofileDto userProfile){
+        System.out.println(userProfile);
+        return userProfile;
     }
 }

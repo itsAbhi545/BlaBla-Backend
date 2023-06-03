@@ -1,20 +1,14 @@
-package com.example.BlaBlaBackend.entity;
+package com.example.BlaBlaBackend.Dto;
 
 import com.example.BlaBlaBackend.customAnnotation.Trim;
+import com.example.BlaBlaBackend.customAnnotation.TrimConverterRequestParam;
 import com.example.BlaBlaBackend.util.Regex;
-import jakarta.persistence.*;
+import jakarta.persistence.Convert;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
-@Entity
-@Table(name = "userprofile")
-public class UserProfile {
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    int id;
-    //userImg,dob,
-    @OneToOne
-    @JoinColumn(name = "user")
-    private User user;
+
+public class UserprofileDto {
     @NotBlank(message = "FirstName can't be null")
     @Trim
     private String firstName;
@@ -26,7 +20,7 @@ public class UserProfile {
     @Trim
     @NotNull(message = "D.O.B can't be null")
     private String dob;
-    @Trim
+    @Convert(converter = TrimConverterRequestParam.class)
     @Pattern(regexp = Regex.PHONENUMBER,message = "Enter valid Phone-Number")
     private String phoneNumber;
     @Trim
@@ -36,19 +30,40 @@ public class UserProfile {
         return firstName;
     }
 
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
     public String getLastName() {
         return lastName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
     }
 
     public String getUserImageUrl() {
         return userImageUrl;
     }
 
+    public void setUserImageUrl(String userImageUrl) {
+        this.userImageUrl = userImageUrl;
+    }
+
     public String getDob() {
         return dob;
     }
+
+    public void setDob(String dob) {
+        this.dob = dob;
+    }
+
     public String getPhoneNumber() {
         return phoneNumber;
+    }
+
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
     }
 
     public String getGender() {
@@ -57,33 +72,5 @@ public class UserProfile {
 
     public void setGender(String gender) {
         this.gender = gender;
-    }
-
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
-    }
-
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
-    }
-
-    public void setUserImageUrl(String userImageUrl) {
-        this.userImageUrl = userImageUrl;
-    }
-
-    public void setDob(String dob) {
-        this.dob = dob;
-    }
-
-    public void setPhoneNumber(String phoneNumber) {
-        this.phoneNumber = phoneNumber;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
-    }
-
-    public User getUser(){
-        return this.user;
     }
 }

@@ -1,6 +1,9 @@
 package com.example.BlaBlaBackend.entity;
 
 import jakarta.persistence.*;
+import org.hibernate.annotations.UpdateTimestamp;
+
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "confirmationToken")
@@ -8,10 +11,13 @@ public class ConfirmationToken {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int cid;
+
     private String userVerifyToken;
     @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "userId")
     private User userId;
+    @UpdateTimestamp
+    private LocalDateTime lastUpdated;
 
     public ConfirmationToken() {
 
@@ -32,6 +38,10 @@ public class ConfirmationToken {
 
     public User getUserId() {
         return userId;
+    }
+
+    public LocalDateTime getLastUpdated() {
+        return lastUpdated;
     }
 
     public void setCid(int cid) {

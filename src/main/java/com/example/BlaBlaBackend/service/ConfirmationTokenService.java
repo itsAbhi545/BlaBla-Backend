@@ -18,4 +18,7 @@ public class ConfirmationTokenService {
     public ConfirmationToken findConfirmationTokenByUserVerifyToken(String userVerifyToken){
         return confirmationTokenRepo.findConfirmationTokenByUserVerifyToken(userVerifyToken);
     }
+    public void deleteConfirmationTokenByCid(int cid){
+        confirmationTokenRepo.deleteById(cid);
+    }
 }

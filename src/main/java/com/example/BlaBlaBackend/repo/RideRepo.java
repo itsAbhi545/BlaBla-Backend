@@ -20,6 +20,7 @@ public interface RideRepo extends JpaRepository<Ride, Integer> {
     List<Ride> findRideBySourceAndDestination(String source, String Destination);
     List<Ride> findByUser(User user);
     List<Ride> findByVehicleAndDateAndTime(Vehicle vehicle, String Date, LocalTime time);
+    Ride findRideById(int id);
 
     @Query(
 value = "select * From ride r " +

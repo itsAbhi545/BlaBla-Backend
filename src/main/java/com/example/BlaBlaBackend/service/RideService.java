@@ -36,6 +36,7 @@ public class RideService {
         ride.setUser(userService.findUserByEmail(email));
         return saveRide(ride);
     }
+    public Ride findRideById(int id){return rideRepo.findRideById(id);}
     public List<Ride> searchRide(RideDto rideDto, String minPrice, String maxPrice, Time minTime, Time maxTime, Integer order, String sortBy) {
         Integer range = 1000000;
         Pageable pageable;

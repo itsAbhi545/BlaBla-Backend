@@ -8,6 +8,9 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
+
 public class Helper {
     public static String findExtension(String path){
         for(int i=path.length()-1;i>=0;i--){
@@ -52,4 +55,12 @@ public class Helper {
         return rideDto;
 
     }
+    //method for checking token expires or not!!!
+    public static boolean tokenExpires(LocalDateTime time){
+        return (time.until(LocalDateTime.now(), ChronoUnit.MINUTES))>5;
+    }
+//     if((passwordReset.getLastUpdated().until(LocalDateTime.now(), ChronoUnit.MINUTES)) > 1){
+//        passwordService.deleteTokenByUser(passwordReset.getUser());
+//        throw new ApiException(HttpStatus.BAD_REQUEST, "Token Expire At" + passwordReset.getLastUpdated().plusMinutes(1l));
+//    }
 }
