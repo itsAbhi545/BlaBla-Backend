@@ -38,10 +38,7 @@ public class CustomAuthorizationFilter extends OncePerRequestFilter {
         request.getServletPath().equals("/health-check")||request.getServletPath().equals("/favicon.ico")
         ||request.getServletPath().equals("/error")||request.getServletPath().contains("/api/verify-user/email")||
         request.getServletPath().contains("/api/confirm-account")||request.getServletPath().contains("/images/")
-        ||request.getServletPath().equals("/api/forgetPassword")||request.getServletPath().equals("/api/resetPassword"))
-        ||request.getServletPath().equals("/error")||request.getServletPath().equals("/api/verify-user/email")||
-        request.getServletPath().contains("/api/confirm-account")||
-        request.getServletPath().contains("api/forgetPassword") || request.getServletPath().contains("api/resetPassword")
+        ||request.getServletPath().equals("/api/forgetPassword")||request.getServletPath().equals("/api/resetPassword")
         )
         {
             System.out.println( "\u001B[31m" + request.getServletPath() + "\u001B[0m");
