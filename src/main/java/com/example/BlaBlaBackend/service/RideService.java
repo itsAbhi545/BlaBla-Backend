@@ -2,6 +2,7 @@ package com.example.BlaBlaBackend.service;
 
 import com.example.BlaBlaBackend.Dto.RideDto;
 import com.example.BlaBlaBackend.entity.Ride;
+import com.example.BlaBlaBackend.entity.User;
 import com.example.BlaBlaBackend.entity.Vehicle;
 import com.example.BlaBlaBackend.repo.RideRepo;
 import lombok.Setter;
@@ -50,6 +51,9 @@ public class RideService {
     public List<Ride> findByVehicleAndDateAndTime(Vehicle vehicle, String date, LocalTime time){
 
         return rideRepo.findByVehicleAndDateAndTime(vehicle,date,time);
+    }
+    public List<Ride> findRideByUser(User user){
+         return rideRepo.findByUser(user);
     }
 
 }

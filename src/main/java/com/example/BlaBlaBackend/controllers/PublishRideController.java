@@ -4,6 +4,7 @@ import com.example.BlaBlaBackend.Dto.ApiResponse;
 import com.example.BlaBlaBackend.Dto.RideDto;
 import com.example.BlaBlaBackend.Exceptionhandling.ApiException;
 import com.example.BlaBlaBackend.entity.Ride;
+import com.example.BlaBlaBackend.entity.User;
 import com.example.BlaBlaBackend.entity.Vehicle;
 import com.example.BlaBlaBackend.service.RideService;
 import com.example.BlaBlaBackend.service.UserService;
@@ -16,10 +17,7 @@ import org.springframework.beans.propertyeditors.StringTrimmerEditor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.web.bind.WebDataBinder;
-import org.springframework.web.bind.annotation.InitBinder;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
 import java.text.SimpleDateFormat;
@@ -57,6 +55,16 @@ public class PublishRideController {
             throw new ApiException(HttpStatus.IM_USED, "Ride Already Existed With same Vehicle and Time");
         }
         return new ApiResponse("Ride Publish Successfully",rideService.publishController(rideDto,vehicle, principal.getName()),HttpStatus.CREATED);
+    }
+    @GetMapping("ride/{userId}")
+    public ApiResponse findRideByUser(@PathVariable Integer userId, Principal principal){
+        User user = userService.findUserByEmail(principal.getName());
+        if(user.grabCurrentUserId() == userId) {
+            List<Ride> rideList = rideService.findRideByUser(user);
+            return new ApiResponse(  "Ride List Generated For User" + user.getEmail(),rideList, HttpStatus.CREATED);
+        }else {
+            throw new ApiException(HttpStatus.BAD_REQUEST, "Requested User is Not Signed In");
+        }
     }
 
 

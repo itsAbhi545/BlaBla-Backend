@@ -2,6 +2,7 @@ package com.example.BlaBlaBackend.repo;
 
 import com.example.BlaBlaBackend.Dto.RideDto;
 import com.example.BlaBlaBackend.entity.Ride;
+import com.example.BlaBlaBackend.entity.User;
 import com.example.BlaBlaBackend.entity.Vehicle;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -17,6 +18,7 @@ import java.util.List;
 @Repository
 public interface RideRepo extends JpaRepository<Ride, Integer> {
     List<Ride> findRideBySourceAndDestination(String source, String Destination);
+    List<Ride> findByUser(User user);
     List<Ride> findByVehicleAndDateAndTime(Vehicle vehicle, String Date, LocalTime time);
 
     @Query(
