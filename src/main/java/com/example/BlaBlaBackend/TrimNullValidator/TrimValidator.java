@@ -5,15 +5,14 @@ import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 import org.springframework.expression.spel.standard.SpelExpressionParser;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.util.Arrays;
 import java.util.Objects;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Stream;
 
 
-
-public class TrimValidator implements ConstraintValidator<Trim, Object> {
+public class TrimValidator  implements ConstraintValidator<Trim, Object> {
     private static final SpelExpressionParser PARSER = new SpelExpressionParser();
     private String[] fields;
     private String[] excludeFields;
@@ -21,26 +20,45 @@ public class TrimValidator implements ConstraintValidator<Trim, Object> {
 
     @Override
     public void initialize(Trim constraintAnnotation) {
+        System.out.println("\u001B[32m" + "payLoad Length= " +constraintAnnotation + "\u001B[0m");
+        Annotation[] tempvalue = constraintAnnotation.getClass().getDeclaredAnnotations();
+        System.out.println("\u001B[32m" + "clalss Length= " +constraintAnnotation.getClass().getDeclaredAnnotations() + "\u001B[0m");
+        System.out.println("\u001B[32m" + "annotation  Length= " +tempvalue.length+ "\u001B[0m");
+
         fields = constraintAnnotation.value();
         messages = constraintAnnotation.message();
         excludeFields = constraintAnnotation.exclude();
         Arrays.sort(excludeFields);
-//        System.out.println("\u001B[31m" + "Fields length =  " + fields.length + "\u001B[0m");
-//        System.out.println("\u001B[31m" + "Exclude fieldslength = " + excludeFields.length + "\u001B[0m");
+        System.out.println("\u001B[31m" + "Fields length =  " + fields.length + "\u001B[0m");
+        System.out.println("\u001B[31m" + "Exclude fieldslength = " + excludeFields.length + "\u001B[0m");
 
     }
 
 
     @Override
     public boolean isValid(Object value, ConstraintValidatorContext context) {
-//        System.out.println("\u001B[31m" + "Stringhere = " + value + "\u001B[0m");
-        messages = "";
-        if(fields.length == 0) {
-            Field[] tempFields = value.getClass().getDeclaredFields();
-            fields= Stream.of(tempFields).filter(data->(data.getType()==String.class)).map(data-> data.getName()).toArray(String[] :: new);
-//            System.out.println("\u001B[31m" + "size = " + fields.length  + "\u001B[0m");
-         }
 
+        System.out.println("\u001B[31m" + "Stringhere = " + value + "\u001B[0m");
+        messages = "";
+
+        if(fields.length == 0) {
+                if(value.getClass() == String.class){
+
+//        String[] strArr = trim.value();
+//        for(int i = 0; i < strArr.length; i++) {
+//            System.out.println("\u001B[33m" + "value = " + strArr[i] + "\u001B[0m");
+//        }
+                }
+
+
+                Field[] tempFields = value.getClass().getDeclaredFields();
+
+                System.out.println("\u001B[31m" + "size1 = " + tempFields.length + "\u001B[0m");
+
+                fields = Stream.of(tempFields).filter(data -> (data.getType() == String.class)).map(data -> data.getName()).toArray(String[]::new);
+                System.out.println("\u001B[31m" + "size2 = " + fields.length + "\u001B[0m");
+
+        }
         long notNull = Stream.of(fields)
                 .map(field -> {
                     if(Arrays.binarySearch(excludeFields, field) < 0) {
@@ -84,6 +102,7 @@ public class TrimValidator implements ConstraintValidator<Trim, Object> {
         context.buildConstraintViolationWithTemplate(messages).addConstraintViolation();
         return notNull == 0 || notNull == fields.length;
     }
+
 
 
 }

@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalTimeDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalTimeSerializer;
+import jakarta.persistence.JoinColumn;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
@@ -16,18 +17,20 @@ import java.time.LocalTime;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-@Trim
+
 public class RideDto {
 
         private int id;
 
 
-
+        @Trim
         private String source;
+
 
         private String destination;
 
         private String source_latitude;
+
         private String source_longitude;
         private String destination_latitude;
         private String destination_longitude;

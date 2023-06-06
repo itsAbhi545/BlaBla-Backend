@@ -1,15 +1,18 @@
 package com.example.BlaBlaBackend.TrimNullValidator;
 
+import jakarta.persistence.Column;
 import jakarta.validation.Constraint;
 import jakarta.validation.Payload;
 
 import java.lang.annotation.*;
 
-@Target({ElementType.TYPE})
+@Target({ElementType.TYPE, ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 @Constraint(validatedBy = TrimValidator.class)
+
 public @interface Trim {
+    String name() default "";
     String[] value() default {};
     String[] exclude() default {};
 
