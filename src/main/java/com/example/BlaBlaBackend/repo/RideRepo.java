@@ -4,6 +4,7 @@ import com.example.BlaBlaBackend.Dto.RideDto;
 import com.example.BlaBlaBackend.entity.Ride;
 import com.example.BlaBlaBackend.entity.User;
 import com.example.BlaBlaBackend.entity.Vehicle;
+import jakarta.transaction.Transactional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -31,4 +32,8 @@ value = "select * From ride r " +
 )
     Page<Ride> findAllRidesNearLocation(Pageable pageable, RideDto rideDto , @Param("range") Integer range,
                                         String minPrice, String maxPrice, Time minTime, Time maxTime);
+
+    // DELETE
+    @Transactional
+    public void deleteByIdAndUser(Integer id, User user);
 }

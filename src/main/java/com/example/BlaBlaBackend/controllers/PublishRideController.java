@@ -10,6 +10,7 @@ import com.example.BlaBlaBackend.service.RideService;
 import com.example.BlaBlaBackend.service.UserService;
 import com.example.BlaBlaBackend.service.VehicleService;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +23,7 @@ import org.springframework.web.bind.annotation.*;
 import java.security.Principal;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -66,6 +68,18 @@ public class PublishRideController {
             throw new ApiException(HttpStatus.BAD_REQUEST, "Requested User is Not Signed In");
         }
     }
+    @DeleteMapping("/ride/delete/{rideId}")
+    public ApiResponse deleteRideByUser(@PathVariable Integer rideId, Principal principal) {
+        User user = userService.findUserByEmail(principal.getName());
+        rideService.deleteRideByUser(user, rideId);
+        return new ApiResponse("Ride Deleted Successfully", null, HttpStatus.OK);
+    }
+    int[] memoArr = new int[(int) 1e6];
+    @GetMapping("/ride/solution")
+    public String findsolution() {
+        return "hello23";
+    }
+
 
 
 

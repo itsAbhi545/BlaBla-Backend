@@ -56,4 +56,8 @@ public class RideService {
          return rideRepo.findByUser(user);
     }
 
+    public void deleteRideByUser(User user , Integer rideId) {
+        rideRepo.deleteByIdAndUser(rideId, user);
+    }
+
 }
