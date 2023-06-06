@@ -1,6 +1,5 @@
 package com.example.BlaBlaBackend.entity;
 
-import com.example.BlaBlaBackend.customAnnotation.Trim;
 import com.example.BlaBlaBackend.util.Regex;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
@@ -21,12 +20,11 @@ public class User {
     private int id;
     @NotNull(message = "Email can't be null")
     @Pattern(regexp = Regex.EMAIL,message = "Enter valid email")
-    @Trim
     @Column(unique = true)
     private String email;
     @NotNull(message = "Password can't be null")
     @Pattern(regexp = Regex.PASSWORD,message = "Enter valid Password")
-    @Trim
+
     @JsonIgnore
     private String password;
     @CreationTimestamp

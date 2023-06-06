@@ -1,6 +1,5 @@
 package com.example.BlaBlaBackend.Dto;
 
-import com.example.BlaBlaBackend.customAnnotation.Trim;
 import com.example.BlaBlaBackend.util.Regex;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import jakarta.validation.constraints.NotEmpty;
@@ -9,25 +8,18 @@ import jakarta.validation.constraints.Pattern;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class UserDto{
     @NotEmpty(message = "FirstName can't be null")
-    @Trim
     private String firstName;
     @NotEmpty(message = "LastName can't be null")
-    @Trim
     private String lastName;
     @NotEmpty(message = "Email can't be null")
     @Pattern(regexp = Regex.EMAIL,message = "Enter valid email")
-    @Trim
     private String email;
     @NotEmpty(message = "Password can't be null")
     @Pattern(regexp = Regex.PASSWORD,message = "Enter valid Password")
-    @Trim
     private String password;
-    @Trim
     private String gender="MALE";
     @NotEmpty(message = "DateOfBirth can't be null")
-    @Trim
     private  String dob;
-    @Trim
     @Pattern(regexp = Regex.PHONENUMBER)
     private String phoneNumber;
 

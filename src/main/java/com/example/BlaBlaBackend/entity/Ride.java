@@ -1,7 +1,7 @@
 package com.example.BlaBlaBackend.entity;
 
 
-import com.example.BlaBlaBackend.customAnnotation.Trim;
+import com.example.BlaBlaBackend.TrimNullValidator.Trim;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
@@ -19,27 +19,27 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @JsonIgnoreProperties({"handler", "hibernateLazyInitializer"})
+
 public class Ride {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-    @NotNull @Trim
+    @NotNull
     private String source;
-    @NotNull @Trim
+    @NotNull
     private String destination;
-    @JsonIgnore @Trim
+    @JsonIgnore
     private String source_latitude;
-    @JsonIgnore @Trim
+    @JsonIgnore
     private String source_longitude;
-    @JsonIgnore @Trim
+    @JsonIgnore
     private String destination_latitude;
-    @JsonIgnore @Trim
+    @JsonIgnore
     private String destination_longitude;
 
     private int passengers_count;
-    @Trim
+
     private String add_city;
     private Integer set_price;
-    @Trim
     private  String about_ride;
     private int seatBooked=0;
 

@@ -1,6 +1,6 @@
 package com.example.BlaBlaBackend.entity;
 
-import com.example.BlaBlaBackend.customAnnotation.Trim;
+import com.example.BlaBlaBackend.TrimNullValidator.Trim;
 import com.example.BlaBlaBackend.util.Regex;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
@@ -8,6 +8,7 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 @Entity
 @Table(name = "userprofile")
+
 public class UserProfile {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     int id;

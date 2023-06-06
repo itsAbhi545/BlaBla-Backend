@@ -1,29 +1,21 @@
 package com.example.BlaBlaBackend.Dto;
 
-import com.example.BlaBlaBackend.customAnnotation.Trim;
-import com.example.BlaBlaBackend.customAnnotation.TrimConverterRequestParam;
+import com.example.BlaBlaBackend.TrimNullValidator.Trim;
 import com.example.BlaBlaBackend.util.Regex;
-import jakarta.persistence.Convert;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
-
+@Trim
 public class UserprofileDto {
     @NotBlank(message = "FirstName can't be null")
-    @Trim
     private String firstName;
     @NotNull(message = "LastName can't be null")
-    @Trim
     private String lastName;
-    @Trim
     private String userImageUrl;
-    @Trim
     @NotNull(message = "D.O.B can't be null")
     private String dob;
-    @Convert(converter = TrimConverterRequestParam.class)
     @Pattern(regexp = Regex.PHONENUMBER,message = "Enter valid Phone-Number")
     private String phoneNumber;
-    @Trim
     private String gender = "MALE";
 
     public String getFirstName() {

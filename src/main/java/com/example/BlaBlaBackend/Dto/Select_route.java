@@ -1,6 +1,6 @@
 package com.example.BlaBlaBackend.Dto;
 
-import com.example.BlaBlaBackend.customAnnotation.Trim;
+import com.example.BlaBlaBackend.TrimNullValidator.Trim;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
@@ -8,6 +8,7 @@ import lombok.Setter;
 @Builder
 @Getter
 @Setter
+@Trim
 public class Select_route {
     /*
     "road_name": "Route b",
@@ -19,7 +20,7 @@ public class Select_route {
     }
 
      */
-    @Trim
+
     private String road_name;
     Integer distance;
     Integer duration;
