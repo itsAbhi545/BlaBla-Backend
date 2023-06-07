@@ -21,6 +21,9 @@ import static com.example.BlaBlaBackend.util.Helper.findLatLogByName;
 @RestController
 @Slf4j
 public class SearchRideController {
+
+
+
     @Autowired
     RideService rideService;
 
