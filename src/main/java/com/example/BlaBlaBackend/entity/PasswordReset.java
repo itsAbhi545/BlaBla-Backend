@@ -26,8 +26,6 @@ public class PasswordReset {
     @UpdateTimestamp
     private LocalDateTime lastUpdated;
 
-    @UpdateTimestamp
-    private LocalDateTime lastUpdated;
 
 //    @Column(columnDefinition = "boolean default false")
 //    private Boolean isVerify;
