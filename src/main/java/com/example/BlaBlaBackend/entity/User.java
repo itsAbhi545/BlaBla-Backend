@@ -36,7 +36,7 @@ public class User {
     @Column(columnDefinition = "boolean default false")
     private boolean isVerified;
 
-    @OneToOne(mappedBy="user",cascade = CascadeType.PERSIST,orphanRemoval = true)
+    @OneToOne(mappedBy="user",cascade = CascadeType.PERSIST,fetch = FetchType.LAZY,orphanRemoval = true)
     private UserProfile profile;
 
     public int grabCurrentUserId() {

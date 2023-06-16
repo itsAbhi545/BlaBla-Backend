@@ -19,6 +19,14 @@ public class Helper {
         //control never reach here
         return ".";
     }
+    public static String getRoomName(int id1,int id2){
+        String roomName = "room_"+Integer.min(id1,id2)+"."+Integer.max(id1,id2);
+        return roomName;
+    }
+    public static int getUserId(String userChatId){
+        userChatId = userChatId.substring(5);
+        return Integer.parseInt(userChatId);
+    }
     public static String extractUUid(String imageUrl){
         int idx = imageUrl.indexOf('.');
         return imageUrl.substring(8,idx);

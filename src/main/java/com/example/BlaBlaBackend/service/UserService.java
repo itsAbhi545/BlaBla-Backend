@@ -199,4 +199,7 @@ public class UserService implements UserDetailsService{
 
         return userDto;
     }
+    public final User getUserReferenceById(int userId){
+        return userRepo.getReferenceById(userId);
+    }
 }

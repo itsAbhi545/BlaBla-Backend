@@ -76,7 +76,7 @@ public class SecConfig {
         http.authorizeHttpRequests().requestMatchers("/api/verify-user/email/*","/api/confirm-account/*","/images/**").permitAll();
         http.authorizeHttpRequests().requestMatchers("/api/forgetPassword","/api/resetPassword").permitAll();
         http.authorizeHttpRequests().requestMatchers("/api/verify-user/email","/api/confirm-account/*").permitAll();
-        http.authorizeHttpRequests().requestMatchers("/api/forgetPassword","/api/resetPassword").permitAll();
+        http.authorizeHttpRequests().requestMatchers("/api/forgetPassword","/api/resetPassword","/test/**").permitAll();
 
         http.authorizeHttpRequests().anyRequest().authenticated();
         http.addFilter(filter);
